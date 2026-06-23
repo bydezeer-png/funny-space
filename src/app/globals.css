@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Soly's Space Branding - Custom Mockup Aesthetic */
+  --background: #FFF9FB; /* Very delicate, elegant baby pink canvas */
+  --foreground: #1A1A1A; /* Dark charcoal text */
+  --card: #ffffff; /* Pure white cards */
+  --card-foreground: #1A1A1A;
+  --border: #fce7f3; /* Very soft pink border */
+  --primary: #D13F7A; /* Exact brand pink from mockup */
+  --primary-foreground: #ffffff;
+  --secondary: #FFF5F8; /* Soft baby pink secondary */
+  --secondary-foreground: #D13F7A;
+  --accent: #fbcfe8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  
+  --font-cairo: var(--font-cairo);
+  --font-playfair: var(--font-playfair);
+  --font-outfit: var(--font-outfit);
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-playfair), var(--font-outfit), serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }

@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  RECEPTION
+  INSTRUCTOR
+  ACCOUNTANT
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role        Role     @default(RECEPTION)
+  isActive    Boolean  @default(true)
+  permissions String[] // Granular permissions array e.g. ["CAN_DELETE_CLIENT", "CAN_REFUND"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  auditLogs   AuditLog[]
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String   // e.g. "CONFIRM_PAYMENT", "DELETE_CLIENT"
+  details   Json?  // JSON stringified details converted to Jsonb
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Client {
+  id             String         @id @default(cuid())
+  name           String
+  phone          String         @unique
+  birthDate      DateTime?
+  password       String?
+  email          String?
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  enrollments    Enrollment[]
+  posOrders      POSOrder[]
+
+  @@index([phone])
+}
+
+// --- SERVICES & PROGRAMS ---
+
+model ProgramCategory {
+  id        String    @id @default(cuid())
+  name      String    // e.g. "Skating", "Arts", "Music"
+  image     String?   // URL for the cover image
+  programs  Program[]
+}
+
+model Program {
+  id          String    @id @default(cuid())
+  categoryId  String
+  category    ProgramCategory @relation(fields: [categoryId], references: [id])
+  name        String    // e.g. "Skating Beginner Level 1"
+  description String?
+  options     ProgramOption[]
+  enrollments Enrollment[]
+}
+
+model ProgramOption {
+  id               String            @id @default(cuid())
+  programId        String
+  program          Program           @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name             String            // e.g. "8 sessions", "4 sessions"
+  price            Float
+  sessionsPerMonth Int               @default(8)
+  capacity         Int               @default(15)
+  schedules        ProgramSchedule[]
+  enrollments      Enrollment[]
+}
+
+model ProgramSchedule {
+  id          String         @id @default(cuid())
+  optionId    String
+  option      ProgramOption  @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int      // 0=Sunday, 1=Monday...
+  startTime   String   // "17:00"
+  endTime     String   // "19:00"
+}
+
+model Workshop {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  instructor  String?
+  price       Float
+  startDate   DateTime
+  endDate     DateTime
+  capacity    Int       @default(20)
+  enrollments Enrollment[]
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  date        DateTime
+  price       Float
+  capacity    Int       @default(50)
+  enrollments Enrollment[]
+}
+
+enum EnrollmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+model Enrollment {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id])
+  
+  programId   String?
+  program     Program? @relation(fields: [programId], references: [id])
+  
+  optionId    String?
+  option      ProgramOption? @relation(fields: [optionId], references: [id])
+  
+  workshopId  String?
+  workshop    Workshop? @relation(fields: [workshopId], references: [id])
+  
+  eventId     String?
+  event       Event?    @relation(fields: [eventId], references: [id])
+  
+  status      EnrollmentStatus @default(PENDING)
+  paymentMethod String? // CASH, POS
+  totalAmount Float    @default(0) // Total price of the program at the time of booking
+  amountPaid  Float?
+
+  createdByUserId String? // Tracker for employee analytics
+  
+  createdAt   DateTime @default(now())
+  
+  attendances Attendance[]
+
+  @@index([clientId])
+}
+
+model Attendance {
+  id            String      @id @default(cuid())
+  enrollmentId  String
+  enrollment    Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  date          DateTime
+  status        String      @default("ATTENDED") // ATTENDED, ABSENT, MAKEUP
+  isMakeup      Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+
+  @@index([enrollmentId])
+  @@index([date])
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String   @default("SNACKS") // e.g. "SNACKS", "DRINKS", "MERCH"
+  barcode     String?  @unique
+  quantity    Int      @default(0)
+  costPrice   Float    @default(0)
+  price       Float    // Sell price
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  POSOrderItem[]
+}
+
+model POSOrder {
+  id            String   @id @default(cuid())
+  totalAmount   Float    // Total revenue
+  totalCost     Float    // Total cost (used for profit calculation)
+  paymentMethod String   @default("CASH") // "CASH", "CARD", "WALLET"
+  
+  clientId      String?
+  client        Client?  @relation(fields: [clientId], references: [id])
+  
+  isReturned    Boolean  @default(false)
+  discount      Float    @default(0)
+
+  shiftId       String?
+  shift         POSShift? @relation(fields: [shiftId], references: [id])
+
+  createdByUserId String? // Tracker for employee analytics
+
+  createdAt     DateTime @default(now())
+  items         POSOrderItem[]
+
+  @@index([shiftId])
+  @@index([createdAt])
+}
+
+model POSShift {
+  id            String   @id @default(cuid())
+  openedAt      DateTime @default(now())
+  closedAt      DateTime?
+  expectedCash  Float    @default(0) // Automatically calculated cash from POS orders in this shift
+  actualCash    Float?   // Cash counted manually at end of shift
+  notes         String?
+  openedBy      String?  // Name or ID of user who opened
+  orders        POSOrder[]
+  expenses      ShiftExpense[]
+}
+
+model ShiftExpense {
+  id          String   @id @default(uuid())
+  amount      Float
+  description String
+  createdAt   DateTime @default(now())
+  
+  shiftId     String
+  shift       POSShift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
+}
+
+model POSOrderItem {
+  id              String        @id @default(cuid())
+  orderId         String
+  order           POSOrder      @relation(fields: [orderId], references: [id])
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  quantity        Int
+  sellPrice       Float
+  costPrice       Float
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  amount      Float
+  type        String   // "REVENUE" or "EXPENSE"
+  description String?
+  createdAt   DateTime @default(now())
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  amount      Float
+  category    String
+  description String?
+  date        DateTime
+  createdAt   DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  content   String
+  rating    Int      @default(5)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SystemSettings {
+  id             String   @id @default("default")
+  whatsappNumber String?
+  address        String?
+  mapLink        String?
+  paymentMethods String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
