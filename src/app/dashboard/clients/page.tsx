@@ -35,7 +35,7 @@ export default async function ClientsPage() {
         {canAdd && (
           <Link 
             href="/dashboard/clients/new" 
-            className="flex items-center gap-2 bg-gradient-to-r from-primary to-secondary text-white px-6 py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+            className="flex items-center gap-2 bg-gradient-to-r from-primary to-pink-600 text-white px-6 py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-all"
           >
             <Plus size={20} />
             <span>إضافة عميلة جديدة</span>

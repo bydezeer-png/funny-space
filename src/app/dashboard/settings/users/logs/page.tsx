@@ -83,7 +83,7 @@ export default async function AuditLogsPage() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-2 flex items-center gap-3">
+          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-600 mb-2 flex items-center gap-3">
             سجل نشاط الموظفين <ShieldCheck className="text-primary"/>
           </h1>
           <p className="text-foreground/60 font-medium">

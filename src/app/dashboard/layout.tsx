@@ -153,7 +153,7 @@ export default async function DashboardLayout({
           </div>
           <div className="flex items-center gap-3 mr-auto">
             <ThemeToggle />
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-background">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-pink-600 flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-background">
               {session.user?.name?.charAt(0).toUpperCase() || "A"}
             </div>
           </div>

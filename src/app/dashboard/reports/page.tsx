@@ -33,7 +33,7 @@ export default async function ReportsOverviewPage({
           <p className="text-foreground/50 text-sm font-bold mb-2">إجمالي المصروفات</p>
           <p className="text-4xl font-black text-red-500">{data.expense.toLocaleString()} <span className="text-sm">ج.م</span></p>
         </div>
-        <div className="bg-gradient-to-tr from-primary to-secondary p-6 rounded-3xl text-primary-foreground shadow-xl">
+        <div className="bg-gradient-to-tr from-primary to-pink-600 p-6 rounded-3xl text-primary-foreground shadow-xl">
           <p className="text-primary-foreground/80 text-sm font-bold mb-2">صافي الربح</p>
           <p className="text-4xl font-black">{data.netProfit.toLocaleString()} <span className="text-sm">ج.م</span></p>
         </div>

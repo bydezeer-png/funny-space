@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   /* Soly's Space Branding - Custom Mockup Aesthetic */
   --background: #FFF9FB; /* Very delicate, elegant baby pink canvas */
@@ -12,6 +14,19 @@
   --secondary: #FFF5F8; /* Soft baby pink secondary */
   --secondary-foreground: #D13F7A;
   --accent: #fbcfe8;
+}
+
+.dark {
+  --background: #090607; /* Dark elegant night mode bg */
+  --foreground: #F7F3F5; /* Light soft white text */
+  --card: #120D0F; /* Dark cards */
+  --card-foreground: #F7F3F5;
+  --border: #24141A; /* Dark pink border */
+  --primary: #EC4899; /* Vibrant brand pink for contrast */
+  --primary-foreground: #ffffff;
+  --secondary: #1C0F13; /* Deep pink-black background */
+  --secondary-foreground: #EC4899;
+  --accent: #F472B6;
 }
 
 @theme inline {

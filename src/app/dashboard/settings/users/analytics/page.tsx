@@ -79,8 +79,8 @@ export default async function EmployeeAnalyticsPage() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary mb-2 flex items-center gap-3">
-            إحصائيات وإنتاجية الموظفين <TrendingUp className="text-secondary"/>
+          <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-600 mb-2 flex items-center gap-3">
+            إحصائيات وإنتاجية الموظفين <TrendingUp className="text-primary"/>
           </h1>
           <p className="text-foreground/60 font-medium">
             متابعة أداء كل موظفة بناءً على الاشتراكات والمبيعات التي قامت بتسجيلها.
@@ -92,7 +92,7 @@ export default async function EmployeeAnalyticsPage() {
         {userStats.map(stat => (
           <div key={stat.id} className="bg-card border border-border p-6 rounded-3xl shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
             <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 flex items-center justify-center text-primary font-black text-xl border border-primary/10">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-r from-primary/20 to-pink-500/20 flex items-center justify-center text-primary font-black text-xl border border-primary/10">
                 {stat.name.charAt(0)}
               </div>
               <div>
@@ -116,18 +116,18 @@ export default async function EmployeeAnalyticsPage() {
 
               <div className="flex justify-between items-center p-3 bg-muted/30 rounded-2xl border border-border/50">
                 <div className="flex items-center gap-2 text-foreground/70 font-bold text-sm">
-                  <ShoppingBag size={16} className="text-secondary" /> مبيعات كاشير
+                  <ShoppingBag size={16} className="text-primary" /> مبيعات كاشير
                 </div>
                 <div className="text-left">
                   <div className="font-black text-foreground">{stat.totalPOS} <span className="text-xs font-normal">طلب</span></div>
-                  <div className="text-xs text-secondary font-bold">{stat.posRevenue} ج.م</div>
+                  <div className="text-xs text-primary font-bold">{stat.posRevenue} ج.م</div>
                 </div>
               </div>
             </div>
 
             <div className="pt-4 border-t border-border flex justify-between items-center">
               <span className="text-foreground/60 font-bold text-sm">إجمالي الإيرادات المُدخلة</span>
-              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-pink-600">
                 {stat.totalRevenue} <span className="text-sm font-bold text-foreground/50">ج.م</span>
               </span>
             </div>
