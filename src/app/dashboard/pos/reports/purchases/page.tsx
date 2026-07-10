@@ -55,7 +55,7 @@ export default async function PurchasesLogPage() {
                 </tr>
               ) : (
                 purchases.map(purchase => (
-                  <tr key={purchase.id} className="border-b border-border/30 hover:bg-white/5 transition-colors">
+                  <tr key={purchase.id} className="border-b border-border/30 hover:bg-card/5 transition-colors">
                     <td className="p-6 text-foreground/80 font-medium" dir="ltr">{new Date(purchase.createdAt).toLocaleString('ar-EG')}</td>
                     <td className="p-6 font-bold text-foreground">{purchase.description}</td>
                     <td className="p-6">

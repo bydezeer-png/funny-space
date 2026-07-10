@@ -75,7 +75,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               value={form.whatsappNumber}
               onChange={e => setForm({...form, whatsappNumber: e.target.value})}
               placeholder="مثال: 01012345678"
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-white transition-all shadow-inner text-left"
+              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
               dir="ltr"
             />
           </div>
@@ -91,7 +91,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               onChange={e => setForm({...form, address: e.target.value})}
               placeholder="اكتب عنوان المكان بالتفصيل..."
               rows={2}
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl pr-12 pl-4 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-white transition-all shadow-inner resize-none"
+              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl pr-12 pl-4 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner resize-none"
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               value={form.mapLink}
               onChange={e => setForm({...form, mapLink: e.target.value})}
               placeholder="https://maps.google.com/..."
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-white transition-all shadow-inner text-left"
+              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
               dir="ltr"
             />
           </div>
@@ -118,7 +118,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
       <div className="pt-6 border-t border-pink-50">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <label className="block text-sm font-black text-[#121212] flex items-center gap-2">
+            <label className="block text-sm font-black text-foreground flex items-center gap-2">
               <CreditCard size={18} className="text-primary" />
               طرق الدفع المتاحة
             </label>
@@ -140,7 +140,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
             </div>
           )}
           {methods.map((m, index) => (
-            <div key={m.id} className="bg-white border border-pink-100/80 rounded-2xl p-5 flex gap-4 shadow-sm relative group">
+            <div key={m.id} className="bg-card border border-pink-100/80 rounded-2xl p-5 flex gap-4 shadow-sm relative group">
               <button 
                 type="button"
                 onClick={() => removeMethod(m.id)}

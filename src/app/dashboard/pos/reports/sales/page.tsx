@@ -55,7 +55,7 @@ export default async function SalesLogPage() {
                 </tr>
               ) : (
                 orders.map(order => (
-                  <tr key={order.id} className="border-b border-border/30 hover:bg-white/5 transition-colors">
+                  <tr key={order.id} className="border-b border-border/30 hover:bg-card/5 transition-colors">
                     <td className="p-6 font-black text-foreground/80" dir="ltr">#{order.id.slice(-6).toUpperCase()}</td>
                     <td className="p-6">
                       <div className="font-medium text-foreground">{new Date(order.createdAt).toLocaleString('ar-EG')}</div>

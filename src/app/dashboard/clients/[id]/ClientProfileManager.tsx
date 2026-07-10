@@ -114,7 +114,7 @@ export default function ClientProfileManager({
         <div className="flex flex-col sm:flex-row items-center gap-5 z-10 w-full md:w-auto">
           {/* Large Avatar */}
           <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-primary to-pink-500 p-[1.5px] shadow-lg shadow-pink-200/20 shrink-0">
-            <div className="w-full h-full bg-white rounded-3xl flex items-center justify-center font-black text-3xl text-primary select-none">
+            <div className="w-full h-full bg-card rounded-3xl flex items-center justify-center font-black text-3xl text-primary select-none">
               {client.name.trim().charAt(0)}
             </div>
           </div>
@@ -192,7 +192,7 @@ export default function ClientProfileManager({
                     </div>
 
                     <div className="text-right">
-                      <h4 className="font-black text-base text-[#121212]">{item.name}</h4>
+                      <h4 className="font-black text-base text-foreground">{item.name}</h4>
                       <p className="text-xs font-semibold text-foreground/50 mt-1">
                         نوع الاشتراك: <span className="font-bold">{enr.program ? "برنامج" : enr.workshop ? "ورشة عمل" : "حفلة"}</span>
                       </p>
@@ -228,7 +228,7 @@ export default function ClientProfileManager({
                       </span>
                       
                       <div className="text-right">
-                        <p className="font-black text-sm text-[#121212]">{item.name}</p>
+                        <p className="font-black text-sm text-foreground">{item.name}</p>
                         <p className="text-[10px] font-semibold text-foreground/40 mt-1">
                           {new Date(att.date).toLocaleString('ar-EG', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </p>

@@ -125,7 +125,7 @@ export default async function DashboardPage() {
     if (e.program) return { name: e.program.name, type: "برنامج", color: "bg-pink-50 text-primary border-pink-100" }
     if (e.workshop) return { name: e.workshop.name, type: "ورشة عمل", color: "bg-orange-50 text-orange-600 border-orange-100" }
     if (e.event) return { name: e.event.name, type: "فعالية", color: "bg-purple-50 text-purple-600 border-purple-100" }
-    return { name: "خدمة غير محددة", type: "أخرى", color: "bg-gray-50 text-gray-500 border-gray-100" }
+    return { name: "خدمة غير محددة", type: "أخرى", color: "bg-muted/30 text-gray-500 border-gray-100" }
   }
 
   return (
@@ -274,7 +274,7 @@ export default async function DashboardPage() {
               <div className="w-16 h-16 bg-pink-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-pink-100">
                 <Sparkles size={28} />
               </div>
-              <h3 className="text-xl font-black text-[#121212] mb-2">أهلاً بكِ في لوحة القيادة لـ Soly's Space</h3>
+              <h3 className="text-xl font-black text-foreground mb-2">أهلاً بكِ في لوحة القيادة لـ Soly's Space</h3>
               <p className="text-xs text-foreground/55 font-bold max-w-md mx-auto leading-relaxed">
                 استخدمي القائمة الجانبية أو الاختصارات بالأعلى لإدارة الحجوزات، العميلات، البرامج، والورديات بسهولة وسرعة تامة حسب صلاحيات حسابك.
               </p>

@@ -14,7 +14,7 @@ export default function SettingsLayout({
           <Settings size={24} />
         </div>
         <div>
-          <h1 className="text-3xl font-black text-[#121212] tracking-tight">الإعدادات الشاملة</h1>
+          <h1 className="text-3xl font-black text-foreground tracking-tight">الإعدادات الشاملة</h1>
           <p className="text-foreground/60 font-medium">التحكم في معلومات المكان، إدارة الموظفين، وسجل الحركات.</p>
         </div>
       </div>

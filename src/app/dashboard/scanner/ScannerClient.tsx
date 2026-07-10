@@ -154,7 +154,7 @@ export default function ScannerClient() {
             </div>
 
             <div className="max-w-md space-y-2">
-              <h2 className="text-3xl font-black text-[#121212] tracking-tight">
+              <h2 className="text-3xl font-black text-foreground tracking-tight">
                 ماسح الدخول السريع
               </h2>
               <p className="text-sm text-foreground/60 font-semibold leading-relaxed">

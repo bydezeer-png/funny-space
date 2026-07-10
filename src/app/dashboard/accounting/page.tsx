@@ -111,7 +111,7 @@ export default async function AccountingPage() {
                 </tr>
               ) : (
                 transactions.map(tx => (
-                  <tr key={tx.id} className="border-b border-border/30 hover:bg-white/5 transition-colors">
+                  <tr key={tx.id} className="border-b border-border/30 hover:bg-card/5 transition-colors">
                     <td className="p-6 text-foreground/80 font-medium" dir="ltr">{new Date(tx.createdAt).toLocaleString('ar-EG')}</td>
                     <td className="p-6">
                       {tx.type === "REVENUE" ? (

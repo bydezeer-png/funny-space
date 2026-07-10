@@ -113,7 +113,7 @@ export default function ReceptionManager({
     }
     if (e.workshop) return { type: "ورشة تدريبية", name: e.workshop.name, price: e.workshop.price, icon: <Calendar size={14}/>, color: "text-orange-600 bg-orange-50 border-orange-100" }
     if (e.event) return { type: "فعالية / حفلة", name: e.event.name, price: e.event.price, icon: <PartyPopper size={14}/>, color: "text-purple-600 bg-purple-50 border-purple-100" }
-    return { type: "خدمة مجهولة", name: "غير محدد", price: 0, icon: null, color: "text-gray-500 bg-gray-50 border-gray-100" }
+    return { type: "خدمة مجهولة", name: "غير محدد", price: 0, icon: null, color: "text-gray-500 bg-muted/30 border-gray-100" }
   }
 
   return (
@@ -126,7 +126,7 @@ export default function ReceptionManager({
             onClick={() => setActiveTab("pending")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'pending' 
-                ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -140,7 +140,7 @@ export default function ReceptionManager({
             onClick={() => setActiveTab("confirmed")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'confirmed' 
-                ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -161,7 +161,7 @@ export default function ReceptionManager({
           return (
             <div 
               key={e.id} 
-              className="bg-white border border-pink-100/50 rounded-[2rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
+              className="bg-card border border-pink-100/50 rounded-[2rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
             >
               
               <div>
@@ -175,7 +175,7 @@ export default function ReceptionManager({
                     </div>
                     
                     <div className="text-right">
-                      <h4 className="font-black text-[#121212] leading-tight text-base group-hover:text-primary transition-colors">
+                      <h4 className="font-black text-foreground leading-tight text-base group-hover:text-primary transition-colors">
                         {e.client.name}
                       </h4>
                       <p className="text-foreground/45 font-semibold text-xs mt-1 flex items-center gap-1">
@@ -208,7 +208,7 @@ export default function ReceptionManager({
 
                 {/* Service Info Box */}
                 <div className="bg-[#FFF5F8]/60 border border-pink-100/30 rounded-2xl p-4 mb-4">
-                  <p className="font-black text-[#121212] text-sm leading-snug mb-1.5">{service.name}</p>
+                  <p className="font-black text-foreground text-sm leading-snug mb-1.5">{service.name}</p>
                   <div className="flex justify-between items-baseline">
                     <span className="text-[10px] font-bold text-foreground/40">سعر الخدمة</span>
                     <span className="text-primary font-black text-lg">{service.price} ج.م</span>
@@ -346,7 +346,7 @@ export default function ReceptionManager({
           <div className="w-16 h-16 rounded-full bg-pink-50/50 flex items-center justify-center mx-auto mb-4 border border-pink-100/30">
             <Sparkles size={24} className="text-primary/45" />
           </div>
-          <h4 className="text-lg font-black text-[#121212] mb-1">القسم فارغ حالياً</h4>
+          <h4 className="text-lg font-black text-foreground mb-1">القسم فارغ حالياً</h4>
           <p className="text-xs text-foreground/45 font-bold">لا توجد حجوزات أو اشتراكات نشطة مسجلة في هذا التبويب.</p>
         </div>
       )}

@@ -196,7 +196,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
           <div className="w-16 h-16 rounded-2xl bg-pink-50 flex items-center justify-center text-primary mb-4 border border-pink-100/50">
             <AlertCircle size={28} />
           </div>
-          <h3 className="text-xl font-black text-[#121212] mb-1">لا توجد آراء مطابقة</h3>
+          <h3 className="text-xl font-black text-foreground mb-1">لا توجد آراء مطابقة</h3>
           <p className="text-foreground/50 text-sm font-semibold max-w-sm">
             لم يتم العثور على أي آراء تطابق خيارات البحث الحالية أو أن قاعدة البيانات فارغة تماماً.
           </p>
@@ -268,7 +268,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
                     title={t.isActive ? "إيقاف التفعيل" : "تفعيل"}
                     className={`w-11 h-6 rounded-full p-1 transition-all flex items-center ${t.isActive ? "bg-primary justify-start" : "bg-foreground/20 justify-end"}`}
                   >
-                    <div className="w-4 h-4 rounded-full bg-white transition-all"></div>
+                    <div className="w-4 h-4 rounded-full bg-card transition-all"></div>
                   </button>
                 </div>
 
@@ -376,7 +376,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
                   onClick={() => setIsActive(!isActive)}
                   className={`w-11 h-6 rounded-full p-1 transition-all flex items-center ${isActive ? "bg-primary justify-start" : "bg-foreground/20 justify-end"}`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-white transition-all"></div>
+                  <div className="w-4 h-4 rounded-full bg-card transition-all"></div>
                 </button>
                 
                 <div className="text-right">

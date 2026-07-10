@@ -230,7 +230,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
             onClick={() => setActiveTab("programs")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'programs' 
-                ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -242,7 +242,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
             onClick={() => setActiveTab("categories")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'categories' 
-                ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -266,9 +266,9 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
       {activeTab === 'categories' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
           {/* Add Category Card */}
-          <div className="bg-white p-6 rounded-[2.5rem] border border-pink-100/50 shadow-sm flex flex-col justify-between">
+          <div className="bg-card p-6 rounded-[2.5rem] border border-pink-100/50 shadow-sm flex flex-col justify-between">
             <div>
-              <h3 className="text-xl font-black text-[#121212] mb-2 flex items-center gap-2">
+              <h3 className="text-xl font-black text-foreground mb-2 flex items-center gap-2">
                 <FolderTree className="text-primary" size={20} />
                 إضافة قسم جديد
               </h3>
@@ -308,8 +308,8 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
           </div>
 
           {/* Categories List */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-[2.5rem] border border-pink-100/50 shadow-sm">
-            <h3 className="text-xl font-black text-[#121212] mb-1">الأقسام الحالية</h3>
+          <div className="lg:col-span-2 bg-card p-6 rounded-[2.5rem] border border-pink-100/50 shadow-sm">
+            <h3 className="text-xl font-black text-foreground mb-1">الأقسام الحالية</h3>
             <p className="text-xs text-foreground/45 font-bold mb-6">الأقسام والتقسيمات الرئيسية المسجلة في النظام.</p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -325,7 +325,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                         <div className="w-10 h-10 rounded-xl overflow-hidden border border-pink-100 bg-cover bg-center shrink-0" style={{ backgroundImage: `url(${c.image})` }}></div>
                       )}
                       <div>
-                        <span className="font-black text-[#121212] block">{c.name}</span>
+                        <span className="font-black text-foreground block">{c.name}</span>
                         <span className="text-[10px] text-foreground/40 font-bold mt-1 block">
                           يحتوي على: {associatedCount} برنامج
                         </span>
@@ -368,7 +368,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
           {programs.map(p => (
             <div 
               key={p.id} 
-              className="bg-white border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col relative group"
+              className="bg-card border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col relative group"
             >
               <div>
                 {/* Badge Category & Controls */}
@@ -395,7 +395,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                 </div>
 
                 {/* Program Details */}
-                <h3 className="text-xl font-black text-[#121212] mb-2 leading-snug group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors">
                   {p.name}
                 </h3>
                 
@@ -410,7 +410,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                   {p.options.map((opt:any, idx:number) => (
                     <div key={idx} className="bg-[#FFF5F8]/50 border border-pink-100/30 rounded-2xl p-3">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-bold text-sm text-[#121212]">{opt.name}</span>
+                        <span className="font-bold text-sm text-foreground">{opt.name}</span>
                         <span className="text-sm font-black text-primary">{opt.price} ج.م</span>
                       </div>
                       <div className="flex items-center gap-3 text-[10px] font-bold text-foreground/50 mb-2">
@@ -420,8 +420,8 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                       {/* Schedules for option */}
                       <div className="space-y-1">
                         {opt.schedules.map((s:any, sIdx:number) => (
-                          <div key={sIdx} className="text-[10px] bg-white border border-pink-100/20 rounded-lg px-2 py-1 flex justify-between items-center">
-                            <span className="font-bold text-[#121212]">{days[s.dayOfWeek]}</span>
+                          <div key={sIdx} className="text-[10px] bg-card border border-pink-100/20 rounded-lg px-2 py-1 flex justify-between items-center">
+                            <span className="font-bold text-foreground">{days[s.dayOfWeek]}</span>
                             <span className="font-semibold text-foreground/60" dir="ltr">{s.startTime} - {s.endTime}</span>
                           </div>
                         ))}
@@ -438,7 +438,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
               <div className="w-16 h-16 rounded-full bg-pink-50/50 flex items-center justify-center mx-auto mb-4 border border-pink-100/30">
                 <Sparkles size={24} className="text-primary/45" />
               </div>
-              <h4 className="text-lg font-black text-[#121212] mb-1">لا توجد برامج مسجلة حالياً</h4>
+              <h4 className="text-lg font-black text-foreground mb-1">لا توجد برامج مسجلة حالياً</h4>
               <p className="text-xs text-foreground/45 font-bold">ابدأ بإضافة أول برنامج عبر الضغط على الزر أعلاه.</p>
             </div>
           )}
@@ -448,11 +448,11 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
       {/* MODERN OUTLINE MODAL FORM (FOR ADD/EDIT PROGRAM) */}
       {isEditingProgram && (
         <div className="fixed inset-0 bg-[#121212]/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-3xl rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
+          <div className="bg-card w-full max-w-3xl rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6 border-b border-pink-50 pb-4 sticky top-0 bg-white z-10 pt-2">
-              <h3 className="text-2xl font-black text-[#121212] flex items-center gap-2">
+            <div className="flex justify-between items-center mb-6 border-b border-pink-50 pb-4 sticky top-0 bg-card z-10 pt-2">
+              <h3 className="text-2xl font-black text-foreground flex items-center gap-2">
                 {editingProgramId ? <Edit className="text-primary" size={24}/> : <Plus className="text-primary" size={24}/>}
                 {editingProgramId ? "تعديل البرنامج" : "إضافة برنامج ومستوى جديد"}
               </h3>
@@ -470,7 +470,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
               
               {/* Program Basics */}
               <div className="space-y-4">
-                <h4 className="font-black text-lg text-[#121212] border-b-2 border-primary/20 inline-block pb-1">المعلومات الأساسية</h4>
+                <h4 className="font-black text-lg text-foreground border-b-2 border-primary/20 inline-block pb-1">المعلومات الأساسية</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-foreground/50 mb-2">قسم البرنامج (الفئة)</label>
@@ -512,7 +512,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
               {/* Program Options */}
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <h4 className="font-black text-lg text-[#121212] border-b-2 border-primary/20 inline-block pb-1">خيارات وباقات الاشتراك</h4>
+                  <h4 className="font-black text-lg text-foreground border-b-2 border-primary/20 inline-block pb-1">خيارات وباقات الاشتراك</h4>
                   <button 
                     type="button" 
                     onClick={handleAddOption}
@@ -524,7 +524,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
 
                 <div className="space-y-6">
                   {programForm.options.map((opt, optIndex) => (
-                    <div key={optIndex} className="bg-white border-2 border-pink-50 rounded-2xl p-4 sm:p-6 shadow-sm relative">
+                    <div key={optIndex} className="bg-card border-2 border-pink-50 rounded-2xl p-4 sm:p-6 shadow-sm relative">
                       <button 
                         type="button" 
                         onClick={() => handleRemoveOption(optIndex)}
@@ -584,13 +584,13 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                       {/* Schedules for this Option */}
                       <div className="bg-[#FFF5F8]/60 border border-pink-100/30 rounded-xl p-4">
                         <div className="flex justify-between items-center mb-3">
-                          <h5 className="font-bold text-[#121212] text-xs flex items-center gap-1.5">
+                          <h5 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                             <CalendarDays size={14} className="text-primary"/> مواعيد هذه الباقة
                           </h5>
                           <button 
                             type="button" 
                             onClick={() => handleAddSchedule(optIndex)} 
-                            className="text-[11px] bg-white border border-pink-100/50 hover:border-primary text-primary font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
+                            className="text-[11px] bg-card border border-pink-100/50 hover:border-primary text-primary font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-colors cursor-pointer"
                           >
                             <Plus size={12}/> إضافة موعد
                           </button>
@@ -601,7 +601,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
                         ) : (
                           <div className="space-y-2">
                             {opt.schedules.map((schedule, schIndex) => (
-                              <div key={schIndex} className="flex flex-wrap items-center gap-3 bg-white px-3 py-2 rounded-lg border border-pink-100/30 shadow-sm relative group">
+                              <div key={schIndex} className="flex flex-wrap items-center gap-3 bg-card px-3 py-2 rounded-lg border border-pink-100/30 shadow-sm relative group">
                                 
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-[9px] font-bold text-foreground/40">اليوم</span>
@@ -652,7 +652,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
               </div>
 
               {/* Actions Footer */}
-              <div className="flex justify-end gap-3 border-t border-pink-50 pt-6 mt-8 sticky bottom-0 bg-white/95 backdrop-blur py-4 z-10 rounded-b-[2.5rem]">
+              <div className="flex justify-end gap-3 border-t border-pink-50 pt-6 mt-8 sticky bottom-0 bg-card/95 backdrop-blur py-4 z-10 rounded-b-[2.5rem]">
                 <button 
                   type="button" 
                   onClick={() => setIsEditingProgram(false)} 
@@ -678,10 +678,10 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
       {/* CATEGORY EDIT MODAL */}
       {isEditingCategory && (
         <div className="fixed inset-0 bg-[#121212]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 animate-in zoom-in-95 duration-200 text-right">
+          <div className="bg-card w-full max-w-md rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 animate-in zoom-in-95 duration-200 text-right">
             {/* Header */}
             <div className="flex justify-between items-center mb-6 border-b border-pink-50 pb-4">
-              <h3 className="text-xl font-black text-[#121212] flex items-center gap-2">
+              <h3 className="text-xl font-black text-foreground flex items-center gap-2">
                 <Edit className="text-primary" size={20}/>
                 تعديل القسم
               </h3>

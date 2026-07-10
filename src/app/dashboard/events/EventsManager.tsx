@@ -170,7 +170,7 @@ export default function EventsManager({
               onClick={() => { setActiveTab("workshops"); resetForms() }}
               className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'workshops' 
-                  ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                  ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                   : 'text-foreground/50 hover:text-foreground border border-transparent'
               }`}
             >
@@ -184,7 +184,7 @@ export default function EventsManager({
               onClick={() => { setActiveTab("events"); resetForms() }}
               className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'events' 
-                  ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                  ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                   : 'text-foreground/50 hover:text-foreground border border-transparent'
               }`}
             >
@@ -218,7 +218,7 @@ export default function EventsManager({
             return (
               <div 
                 key={w.id} 
-                className="bg-white border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
+                className="bg-card border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
               >
                 <div>
                   {/* Category and Controls */}
@@ -247,7 +247,7 @@ export default function EventsManager({
                   </div>
 
                   {/* Title and Instructor */}
-                  <h3 className="text-xl font-black text-[#121212] mb-1 group-hover:text-primary transition-colors leading-snug">
+                  <h3 className="text-xl font-black text-foreground mb-1 group-hover:text-primary transition-colors leading-snug">
                     {w.name}
                   </h3>
                   
@@ -283,11 +283,11 @@ export default function EventsManager({
                   <div className="text-[10px] bg-[#FFF5F8]/60 border border-pink-100/10 rounded-2xl p-3 space-y-1.5 mb-4 font-bold text-foreground/60">
                     <div className="flex justify-between">
                       <span>تبدأ:</span>
-                      <span className="text-[#121212]" dir="ltr">{new Date(w.startDate).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                      <span className="text-foreground" dir="ltr">{new Date(w.startDate).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>تنتهي:</span>
-                      <span className="text-[#121212]" dir="ltr">{new Date(w.endDate).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+                      <span className="text-foreground" dir="ltr">{new Date(w.endDate).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                 </div>
@@ -306,7 +306,7 @@ export default function EventsManager({
               <div className="w-16 h-16 rounded-full bg-pink-50/50 flex items-center justify-center mx-auto mb-4 border border-pink-100/30">
                 <Sparkles size={24} className="text-primary/45" />
               </div>
-              <h4 className="text-lg font-black text-[#121212] mb-1">لا توجد ورش عمل حالياً</h4>
+              <h4 className="text-lg font-black text-foreground mb-1">لا توجد ورش عمل حالياً</h4>
               <p className="text-xs text-foreground/45 font-bold">يمكنك إنشاء أول ورشة تدريبية بالضغط على الزر أعلاه.</p>
             </div>
           )}
@@ -324,7 +324,7 @@ export default function EventsManager({
             return (
               <div 
                 key={e.id} 
-                className="bg-white border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
+                className="bg-card border border-pink-100/50 rounded-[2.5rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
               >
                 <div>
                   {/* Category and Controls */}
@@ -353,7 +353,7 @@ export default function EventsManager({
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-xl font-black text-[#121212] mb-2 group-hover:text-primary transition-colors leading-snug">
+                  <h3 className="text-xl font-black text-foreground mb-2 group-hover:text-primary transition-colors leading-snug">
                     {e.name}
                   </h3>
                   
@@ -384,11 +384,11 @@ export default function EventsManager({
                   <div className="text-[10px] bg-[#FFF5F8]/60 border border-pink-100/10 rounded-2xl p-3 space-y-1.5 mb-4 font-bold text-foreground/60">
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1"><Calendar size={12} /> التاريخ:</span>
-                      <span className="text-[#121212]">{new Date(e.date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                      <span className="text-foreground">{new Date(e.date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1"><Clock size={12} /> الساعة:</span>
-                      <span className="text-[#121212]">{new Date(e.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
+                      <span className="text-foreground">{new Date(e.date).toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
                   </div>
                 </div>
@@ -407,7 +407,7 @@ export default function EventsManager({
               <div className="w-16 h-16 rounded-full bg-pink-50/50 flex items-center justify-center mx-auto mb-4 border border-pink-100/30">
                 <Sparkles size={24} className="text-primary/45" />
               </div>
-              <h4 className="text-lg font-black text-[#121212] mb-1">لا توجد حفلات مسجلة حالياً</h4>
+              <h4 className="text-lg font-black text-foreground mb-1">لا توجد حفلات مسجلة حالياً</h4>
               <p className="text-xs text-foreground/45 font-bold">يمكنك إضافة حفلة أو فعالية جديدة بالضغط على الزر أعلاه.</p>
             </div>
           )}
@@ -417,11 +417,11 @@ export default function EventsManager({
       {/* MODERN OUTLINE MODAL DIALOGS */}
       {isEditing && (
         <div className="fixed inset-0 bg-[#121212]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
+          <div className="bg-card w-full max-w-2xl rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
             
             {/* Header */}
             <div className="flex justify-between items-center mb-6 border-b border-pink-50 pb-4">
-              <h3 className="text-2xl font-black text-[#121212] flex items-center gap-2">
+              <h3 className="text-2xl font-black text-foreground flex items-center gap-2">
                 {editingId ? <Edit className="text-primary" size={24}/> : <Plus className="text-primary" size={24}/>}
                 {activeTab === 'workshops' 
                   ? (editingId ? "تعديل ورشة العمل" : "إضافة ورشة عمل جديدة")

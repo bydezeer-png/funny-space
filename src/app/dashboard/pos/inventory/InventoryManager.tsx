@@ -224,7 +224,7 @@ export default function InventoryManager({ initialItems }: { initialItems: Item[
                 </tr>
               ) : (
                 filteredItems.map(item => (
-                  <tr key={item.id} className="border-b border-border/30 hover:bg-white/5 transition-colors">
+                  <tr key={item.id} className="border-b border-border/30 hover:bg-card/5 transition-colors">
                     <td className="p-6 font-black text-foreground">
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-lg text-primary"><Package size={18}/></div>

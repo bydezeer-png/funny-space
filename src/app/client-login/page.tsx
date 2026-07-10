@@ -53,10 +53,10 @@ export default function ClientLoginPage() {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-100/30 rounded-full blur-[130px] pointer-events-none -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-50/40 rounded-full blur-[130px] pointer-events-none -z-10"></div>
 
-      <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
+      <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
         
         {/* Floating Brand Logo */}
-        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-pink-100 bg-white p-1.5 shadow-md shadow-pink-200/10">
+        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-pink-100 bg-card p-1.5 shadow-md shadow-pink-200/10">
           <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
         </div>
 

@@ -29,7 +29,7 @@ export function SettingsTabs() {
             href={t.href}
             className={`shrink-0 px-5 py-2.5 rounded-xl font-black text-sm transition-all flex items-center gap-2 ${
               isMatch 
-                ? 'bg-white text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent hover:bg-pink-50/50'
             }`}
           >
