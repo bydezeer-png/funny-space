@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { ScanLine, UserCheck, AlertCircle, Clock, Sparkles, UserX, ShieldAlert } from "lucide-react"
+import { playSuccessSound, playErrorSound } from "@/lib/audio"
 
 interface CheckIn {
   name: string
@@ -69,13 +70,11 @@ export default function ScannerClient() {
       setRecentCheckIns(prev => [newCheckIn, ...prev].slice(0, 5))
 
       // Play success sound
-      const audio = new Audio('/success.mp3')
-      audio.play().catch(() => {})
+      playSuccessSound()
 
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message })
-      const audio = new Audio('/error.mp3')
-      audio.play().catch(() => {})
+      playErrorSound()
     } finally {
       setScannedId("")
       setLoading(false)

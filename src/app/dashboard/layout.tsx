@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import GlobalSearch from "@/components/GlobalSearch";
+import ThemeToggle from "@/components/ThemeToggle";
 
 import { checkUserPermission, PERMISSIONS } from "@/lib/permissions";
 
@@ -150,7 +151,8 @@ export default async function DashboardLayout({
              </div>
              <h1 className="text-lg font-black tracking-tight text-foreground leading-none font-display">Soly's Space</h1>
           </div>
-          <div className="flex items-center gap-4 mr-auto">
+          <div className="flex items-center gap-3 mr-auto">
+            <ThemeToggle />
             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary to-secondary flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-background">
               {session.user?.name?.charAt(0).toUpperCase() || "A"}
             </div>

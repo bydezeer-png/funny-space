@@ -434,18 +434,27 @@ export async function openShift(openedBy: string, startingCash: number) {
   return shift
 }
 
-export async function closeShift(shiftId: string, actualCash: number, notes?: string) {
+export async function closeShift(shiftId: string, actualCash: number, expectedCash: number, notes?: string) {
   await verifyPermission(PERMISSIONS.OPEN_CLOSE_SHIFT)
+  const discrepancy = actualCash - expectedCash
+
   const shift = await prisma.pOSShift.update({
     where: { id: shiftId },
     data: {
       closedAt: new Date(),
+      expectedCash,
       actualCash,
       notes
     }
   })
 
-  await logAction("CLOSE_SHIFT", { shiftId, actualCash, notes })
+  await logAction("CLOSE_SHIFT", { 
+    shiftId, 
+    actualCash, 
+    expectedCash, 
+    discrepancy, 
+    notes 
+  })
 
   revalidatePath('/dashboard/pos/shift')
   revalidatePath('/dashboard/pos')

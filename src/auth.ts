@@ -22,6 +22,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
         
         if (!user) return null
+
+        // Check if currently locked out
+        if (user.lockoutUntil && user.lockoutUntil > new Date()) {
+          return null
+        }
         
         const passwordsMatch = await bcrypt.compare(
           credentials.password as string,
@@ -29,6 +34,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         )
         
         if (passwordsMatch) {
+          // Reset attempts on successful login
+          if (user.failedAttempts > 0) {
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { failedAttempts: 0, lockoutUntil: null }
+            })
+          }
           return {
             id: user.id,
             name: user.name,
@@ -36,6 +48,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             role: user.role
           }
         }
+
+        // Incorrect password: increment failed attempts
+        const newAttempts = user.failedAttempts + 1
+        const updates: { failedAttempts: number; lockoutUntil?: Date | null } = {
+          failedAttempts: newAttempts
+        }
+        if (newAttempts >= 5) {
+          updates.lockoutUntil = new Date(Date.now() + 15 * 60 * 1000) // Lock for 15 mins
+        }
+        await prisma.user.update({
+          where: { id: user.id },
+          data: updates
+        })
+
         return null
       }
     }),

@@ -1,20 +1,29 @@
 "use client"
 
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
+import { Sun, Moon } from "lucide-react"
+import { useEffect, useState } from "react"
 
-export function ThemeToggle() {
+export default function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return <div className="w-9 h-9 rounded-full bg-border/20 animate-pulse"></div>
+  }
 
   return (
     <button
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="w-10 h-10 rounded-full bg-card border border-border flex items-center justify-center text-foreground hover:bg-muted transition-colors"
-      aria-label="Toggle theme"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      className="p-2.5 rounded-xl hover:bg-border/30 text-foreground transition-all duration-300 shadow-xs border border-border cursor-pointer flex items-center justify-center shrink-0"
+      title="تبديل الوضع الليلي / النهاري"
     >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      {theme === "dark" ? <Sun size={16} className="text-amber-500 animate-spin-slow" /> : <Moon size={16} className="text-foreground/75" />}
     </button>
   )
 }

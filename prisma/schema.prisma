@@ -21,6 +21,8 @@ model User {
   role        Role     @default(RECEPTION)
   isActive    Boolean  @default(true)
   permissions String[] // Granular permissions array e.g. ["CAN_DELETE_CLIENT", "CAN_REFUND"]
+  failedAttempts Int       @default(0)
+  lockoutUntil   DateTime?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   auditLogs   AuditLog[]

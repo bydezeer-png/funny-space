@@ -51,7 +51,7 @@ export default function ShiftManager({ initialShift }: { initialShift: Shift }) 
     setError("")
     setSuccess("")
     try {
-      await closeShift(shift.id, parseFloat(actualCash || "0"), notes)
+      await closeShift(shift.id, parseFloat(actualCash || "0"), shift.expectedCash, notes)
       setShift(null)
       setSuccess("تم إغلاق الوردية وجرد الدرج بنجاح!")
       setActualCash("")

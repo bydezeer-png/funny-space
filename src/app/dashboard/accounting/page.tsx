@@ -5,6 +5,8 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { checkUserPermission, PERMISSIONS } from "@/lib/permissions"
 import AccessDenied from "@/components/AccessDenied"
+import ExportButton from "@/components/ExportButton"
+import PrintButton from "@/components/PrintButton"
 
 export default async function AccountingPage() {
   const session = await auth()
@@ -20,7 +22,7 @@ export default async function AccountingPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card p-8 rounded-3xl shadow-sm border border-border gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-card p-8 rounded-3xl shadow-sm border border-border gap-4 print:hidden">
         <div className="flex items-center gap-4">
           <div className="p-4 bg-primary/10 rounded-2xl text-primary">
             <DollarSign size={32} />
@@ -68,9 +70,27 @@ export default async function AccountingPage() {
         </div>
       </div>
 
-      <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden">
-        <div className="p-8 border-b border-border/50">
+      <div className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden print:border-none print:shadow-none">
+        <div className="p-8 border-b border-border/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
           <h3 className="text-xl font-black text-foreground">أحدث المعاملات</h3>
+          <div className="flex gap-2">
+            <PrintButton />
+            <ExportButton
+              data={transactions}
+              filename="التقرير_المالي_المعاملات"
+              headers={[
+                { key: "createdAt", label: "التاريخ" },
+                { key: "type", label: "النوع" },
+                { key: "amount", label: "المبلغ (ج.م)" },
+                { key: "description", label: "البيان / الوصف" }
+              ]}
+              buttonText="تصدير المعاملات"
+            />
+          </div>
+        </div>
+        <div className="p-8 border-b border-border/50 hidden print:block text-right">
+          <h3 className="text-2xl font-black text-foreground">تقرير المعاملات المالية الرسمي - Soly's Space</h3>
+          <p className="text-xs text-foreground/50 mt-1">تاريخ استخراج التقرير: {new Date().toLocaleDateString('ar-EG')}</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-right border-collapse">

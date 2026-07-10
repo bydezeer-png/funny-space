@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Phone, Search } from "lucide-react"
+import ExportButton from "@/components/ExportButton"
 
 export default function ClientList({ initialClients }: { initialClients: any[] }) {
   const [searchTerm, setSearchTerm] = useState("")
@@ -14,8 +15,8 @@ export default function ClientList({ initialClients }: { initialClients: any[] }
 
   return (
     <div className="bg-card rounded-[2rem] shadow-sm border border-border overflow-hidden">
-      <div className="p-6 border-b border-border/50 bg-background/30">
-        <div className="relative max-w-md">
+      <div className="p-6 border-b border-border/50 bg-background/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="relative max-w-md w-full">
           <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/40" size={20} />
           <input 
             type="text" 
@@ -25,6 +26,16 @@ export default function ClientList({ initialClients }: { initialClients: any[] }
             className="w-full bg-background border border-border rounded-xl py-3 pr-12 pl-4 focus:border-primary outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
           />
         </div>
+        <ExportButton
+          data={filteredClients}
+          filename="قائمة_العميلات_CRM"
+          headers={[
+            { key: "name", label: "الاسم" },
+            { key: "phone", label: "رقم الهاتف" },
+            { key: "createdAt", label: "تاريخ الانضمام" }
+          ]}
+          buttonText="تصدير عميلات CRM"
+        />
       </div>
 
       <div className="overflow-x-auto">

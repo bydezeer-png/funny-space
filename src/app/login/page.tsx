@@ -1,20 +1,42 @@
 import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
+import { prisma } from "@/lib/prisma"
 
 export default async function LoginPage(props: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; minutes?: string }>
 }) {
   const searchParams = await props.searchParams
   const error = searchParams?.error
+  const minutes = searchParams?.minutes
 
   const handleLogin = async (formData: FormData) => {
     "use server"
+    const email = formData.get("email") as string
+
+    // Precheck for account lockout
+    const user = await prisma.user.findUnique({
+      where: { email }
+    })
+
+    if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
+      const timeLeftMs = user.lockoutUntil.getTime() - Date.now()
+      const minutesLeft = Math.ceil(timeLeftMs / (60 * 1000))
+      return redirect(`/login?error=LockedOut&minutes=${minutesLeft}`)
+    }
+
     try {
       const data = Object.fromEntries(formData)
       await signIn("credentials", { ...data, redirectTo: "/dashboard" })
     } catch (error) {
       if (error instanceof AuthError) {
+        // Double check if this attempt just locked out the user
+        const updatedUser = await prisma.user.findUnique({
+          where: { email }
+        })
+        if (updatedUser && updatedUser.failedAttempts >= 5) {
+          return redirect("/login?error=LockedOut&minutes=15")
+        }
         return redirect("/login?error=CredentialsSignin")
       }
       throw error
@@ -40,7 +62,13 @@ export default async function LoginPage(props: {
           </p>
         </div>
 
-        {error && (
+        {error === "LockedOut" && (
+          <div className="bg-amber-50 text-amber-700 p-4 rounded-2xl mb-6 text-xs sm:text-sm font-black border border-amber-100 text-center animate-in shake">
+            ⚠️ تم قفل هذا الحساب مؤقتاً لمدة {minutes || 15} دقيقة بسبب محاولات دخول خاطئة متكررة.
+          </div>
+        )}
+
+        {error === "CredentialsSignin" && (
           <div className="bg-red-50 text-red-500 p-4 rounded-2xl mb-6 text-xs sm:text-sm font-black border border-red-100 text-center animate-in shake">
             ⚠️ البريد الإلكتروني أو كلمة المرور غير صحيحة
           </div>
