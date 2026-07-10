@@ -139,7 +139,7 @@ export default async function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative z-10 bg-gradient-to-br from-background to-background/50">
+      <main className="flex-1 overflow-y-auto relative z-10 bg-gradient-to-br from-background to-card">
         {/* Header */}
         <header className="h-20 bg-card/80 backdrop-blur-md border-b border-border flex items-center justify-between px-6 md:px-8 sticky top-0 z-30 transition-colors duration-300">
           <div className="md:hidden flex items-center gap-3">
