@@ -29,7 +29,7 @@
   --font-cairo: var(--font-cairo);
   --font-playfair: var(--font-playfair);
   --font-outfit: var(--font-outfit);
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-outfit), var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-playfair), var(--font-outfit), serif;
 }
 

@@ -54,7 +54,7 @@ export default function ClientList({ initialClients }: { initialClients: any[] }
                   </td>
                   <td className="p-6 text-foreground/80 font-medium">
                     <Link href={`/dashboard/clients/${client.id}`} className="flex items-center gap-2 mt-1 block w-full">
-                      <div className="p-1.5 bg-secondary/10 text-secondary rounded-lg"><Phone size={14} /></div>
+                      <div className="p-1.5 bg-primary/10 text-primary rounded-lg"><Phone size={14} /></div>
                       <span dir="ltr">{client.phone}</span>
                     </Link>
                   </td>

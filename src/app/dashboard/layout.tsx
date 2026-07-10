@@ -27,17 +27,17 @@ export default async function DashboardLayout({
   });
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background" dir="rtl">
       <GlobalSearch />
       {/* Sidebar */}
       <aside className="w-64 bg-card border-l border-border hidden md:flex flex-col shadow-2xl relative z-20">
-        <div className="p-8 flex items-center justify-center border-b border-border/50">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-primary to-secondary flex items-center justify-center p-1 shadow-[0_0_15px_rgba(255,20,147,0.5)]">
-            <div className="w-full h-full bg-card rounded-full flex items-center justify-center text-center">
-              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary text-sm leading-tight">
-                Soly's<br/>Space
-              </span>
-            </div>
+        <div className="p-6 flex items-center gap-3 border-b border-border/50 justify-start w-full">
+          <div className="w-12 h-12 overflow-hidden rounded-xl border border-pink-100 bg-white p-1 shadow-sm shrink-0">
+            <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
+          </div>
+          <div className="text-right">
+            <h1 className="text-sm font-black tracking-tight text-foreground leading-none font-display">Soly's Space</h1>
+            <p className="text-[8px] text-primary font-extrabold tracking-[0.1em] uppercase mt-1">EMBRACE THE VIBE</p>
           </div>
         </div>
         

@@ -135,7 +135,7 @@ export default async function DashboardPage() {
       <div className="bg-card p-8 rounded-[2rem] border border-border shadow-sm relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="absolute -top-12 -left-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="z-10">
-          <h2 className="text-3xl font-extrabold text-foreground mb-2 flex items-center gap-2 justify-end">
+          <h2 className="text-3xl font-extrabold text-foreground mb-2 flex items-center gap-2">
             <span>مرحباً بكِ، {session.user?.name || "مديرة النظام"} 👋</span>
           </h2>
           <p className="text-foreground/60 text-base font-semibold">
@@ -166,8 +166,8 @@ export default async function DashboardPage() {
           )}
 
           {canSellPos && (
-            <Link href="/dashboard/pos/buy" className="bg-card hover:bg-pink-50/10 border border-border hover:border-secondary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+            <Link href="/dashboard/pos/buy" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <ShoppingCart size={18} />
               </div>
               <div className="text-right">
@@ -190,8 +190,8 @@ export default async function DashboardPage() {
           )}
 
           {canEditTestimonials && (
-            <Link href="/dashboard/testimonials" className="bg-card hover:bg-pink-50/10 border border-border hover:border-secondary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
-              <div className="w-10 h-10 rounded-xl bg-secondary/10 text-secondary flex items-center justify-center group-hover:bg-secondary group-hover:text-white transition-colors">
+            <Link href="/dashboard/testimonials" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+              <div className="w-10 h-10 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <MessageSquare size={18} />
               </div>
               <div className="text-right">
@@ -217,18 +217,18 @@ export default async function DashboardPage() {
         </div>
 
         {canViewReports ? (
-          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-secondary/30 transition-all shadow-sm group">
+          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-4 bg-secondary/10 text-secondary rounded-2xl group-hover:bg-secondary group-hover:text-white transition-colors"><CreditCard size={24}/></div>
+              <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><CreditCard size={24}/></div>
               <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">اليوم</span>
             </div>
             <h3 className="text-foreground/60 text-sm font-bold mb-1">إيرادات الخزينة اليوم</h3>
             <p className="text-4xl font-black text-foreground">{todayRevenue} <span className="text-lg text-foreground/50">ج.م</span></p>
           </div>
         ) : (
-          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-secondary/30 transition-all shadow-sm group">
+          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-4 bg-secondary/10 text-secondary rounded-2xl group-hover:bg-secondary group-hover:text-white transition-colors"><MessageSquare size={24}/></div>
+              <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><MessageSquare size={24}/></div>
               <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">المراجعات</span>
             </div>
             <h3 className="text-foreground/60 text-sm font-bold mb-1">الآراء المفعلة بالموقع</h3>
@@ -302,33 +302,32 @@ export default async function DashboardPage() {
                   return (
                     <div key={e.id} className="py-3.5 flex items-center justify-between gap-4 first:pt-0 last:pb-0">
                       
+                      {/* Right: User and service details */}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-100 text-primary flex items-center justify-center font-black text-xs shrink-0 select-none">
+                          {e.client.name.trim().charAt(0)}
+                        </div>
+                        <div className="text-right min-w-0">
+                          <h4 className="font-black text-sm text-foreground truncate">{e.client.name}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${service.color}`}>
+                              {service.type}
+                            </span>
+                            <span className="text-[10px] text-foreground/50 truncate font-semibold">{service.name}</span>
+                          </div>
+                        </div>
+                      </div>
+
                       {/* Left: Price / Status */}
                       <div className="text-left shrink-0">
                         <span className="text-sm font-black text-foreground">
                           {e.totalAmount} ج.م
                         </span>
-                        <div className="flex items-center justify-start gap-1.5 mt-1">
-                          <span className={`w-1.5 h-1.5 rounded-full ${e.status === 'CONFIRMED' ? 'bg-green-500' : 'bg-amber-500'}`}></span>
+                        <div className="flex items-center justify-end gap-1.5 mt-1">
                           <span className="text-[9px] font-black text-foreground/40">
                             {e.status === 'CONFIRMED' ? 'مؤكد ودفع' : 'بانتظار الدفع'}
                           </span>
-                        </div>
-                      </div>
-
-                      {/* Right: User and service details */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="text-right min-w-0">
-                          <h4 className="font-black text-sm text-foreground truncate">{e.client.name}</h4>
-                          <div className="flex items-center justify-end gap-2 mt-1">
-                            <span className="text-[10px] text-foreground/50 truncate font-semibold">{service.name}</span>
-                            <span className={`text-[8px] font-black px-2 py-0.5 rounded-full border ${service.color}`}>
-                              {service.type}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-100 text-primary flex items-center justify-center font-black text-xs shrink-0 select-none">
-                          {e.client.name.trim().charAt(0)}
+                          <span className={`w-1.5 h-1.5 rounded-full ${e.status === 'CONFIRMED' ? 'bg-green-500' : 'bg-amber-500'}`}></span>
                         </div>
                       </div>
 
