@@ -52,7 +52,7 @@ export default function ClientList({ initialClients }: { initialClients: any[] }
             {filteredClients.length === 0 ? (
               <tr>
                 <td colSpan={4} className="p-16 text-center text-foreground/50 font-bold bg-background/10">
-                  {searchTerm ? "لم يتم العثور على نتائج تطابق بحثك." : "لا يوجد عميلات حتى الآن. أضف عميلة جديدة للبدء. 💅"}
+                  {searchTerm ? "لم يتم العثور على نتائج تطابق بحثك." : "لا يوجد عميلات حتى الآن. أضف عميلة جديدة للبدء. "}
                 </td>
               </tr>
             ) : (
