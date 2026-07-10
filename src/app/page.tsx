@@ -91,12 +91,13 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-between py-6 sm:py-10 lg:py-12 pb-10 sm:pb-12 lg:pb-12 z-20">
           
           {/* Integrated Glassmorphism Header */}
+          <input type="checkbox" id="mobile-menu-toggle" className="hidden peer" />
           <header className="w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl md:rounded-3xl shadow-xs transition-all duration-300 h-16 md:h-18 flex items-center justify-between px-4 sm:px-8 text-white z-20">
             
             {/* Left Side: Burger Menu (Mobile Only) */}
-            <button className="md:hidden w-10 h-10 flex items-center justify-start text-white hover:text-pink-200 transition-colors" aria-label="Menu">
+            <label htmlFor="mobile-menu-toggle" className="md:hidden w-10 h-10 flex items-center justify-start text-white hover:text-pink-200 transition-colors cursor-pointer" aria-label="Menu">
               <Menu size={20} />
-            </button>
+            </label>
 
             {/* Logo Section */}
             <div className="flex items-center gap-2 md:gap-3 justify-center flex-1 md:flex-initial">
@@ -132,6 +133,55 @@ export default async function Home() {
               </a>
             </div>
           </header>
+
+          {/* Mobile Drawer Panel */}
+          <div className="fixed inset-y-0 left-0 w-64 bg-white/95 backdrop-blur-lg border-r border-pink-100 z-50 transform -translate-x-full peer-checked:translate-x-0 transition-transform duration-300 ease-in-out md:hidden shadow-2xl p-6 flex flex-col justify-between">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-pink-100/50 pb-4">
+                 <div className="flex items-center gap-2">
+                    <div className="w-9 h-9 overflow-hidden rounded-lg border border-pink-100 bg-white p-0.5 shadow-2xs">
+                      <img src="/logo.png" alt="Soly's Space" className="w-full h-full object-contain" />
+                    </div>
+                    <span className="text-sm font-black text-slate-800 font-display">Soly's Space</span>
+                 </div>
+                 <label htmlFor="mobile-menu-toggle" className="cursor-pointer text-slate-500 hover:text-slate-800">
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                   </svg>
+                 </label>
+              </div>
+              <nav className="flex flex-col gap-2 text-sm font-semibold uppercase tracking-wider text-slate-600 pt-2">
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#about" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">About Us</a>
+                </label>
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#about" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Our Team</a>
+                </label>
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Programs</a>
+                </label>
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Pricing</a>
+                </label>
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Events</a>
+                </label>
+                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                  <a href="#contact" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Blog</a>
+                </label>
+              </nav>
+            </div>
+            <div className="pt-6">
+              <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
+                <a href="#services" className="flex bg-[#D13F7A] text-white hover:bg-[#B13064] px-5 py-3 rounded-xl text-xs font-bold transition-all justify-center items-center gap-2 shadow-sm">
+                  <span>Book Your Spot 🎀</span>
+                  <CalendarDays size={14} />
+                </a>
+              </label>
+            </div>
+          </div>
+          {/* Dark Overlay when mobile menu is open */}
+          <label htmlFor="mobile-menu-toggle" className="fixed inset-0 bg-black/40 z-40 hidden peer-checked:block md:peer-checked:hidden"></label>
 
           {/* Content Overlaid on Right (RTL displays on the right side) */}
           <div className="w-full md:w-3/5 flex flex-col justify-center items-start text-left text-white space-y-5 z-20 my-auto pt-6 md:pt-8">

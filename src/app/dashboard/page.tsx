@@ -129,16 +129,16 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-right">
+    <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-right">
       
       {/* Welcome Banner */}
-      <div className="bg-card p-8 rounded-[2rem] border border-border shadow-sm relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div className="bg-card p-6 md:p-8 rounded-2xl md:rounded-[2rem] border border-border shadow-sm relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
         <div className="absolute -top-12 -left-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
         <div className="z-10">
-          <h2 className="text-3xl font-extrabold text-foreground mb-2 flex items-center gap-2">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-foreground mb-1 md:mb-2 flex items-center gap-2">
             <span>مرحباً بكِ، {session.user?.name || "مديرة النظام"} 👋</span>
           </h2>
-          <p className="text-foreground/60 text-base font-semibold">
+          <p className="text-foreground/60 text-sm md:text-base font-semibold">
             إليكِ نظرة شاملة على أداء وفعاليات Soly's Space اليوم.
           </p>
         </div>
@@ -149,12 +149,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick Action Shortcuts */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-black text-foreground/45 uppercase tracking-wider">الوصول السريع والإجراءات</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-3 md:space-y-4">
+        <h3 className="text-xs font-black text-foreground/45 uppercase tracking-wider">الوصول السريع والإجراءات</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           
           {canBookEnrollment && (
-            <Link href="/dashboard/reception" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+            <Link href="/dashboard/reception" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-4 md:p-5 rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                 <CalendarDays size={18} />
               </div>
@@ -166,7 +166,7 @@ export default async function DashboardPage() {
           )}
 
           {canSellPos && (
-            <Link href="/dashboard/pos/buy" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+            <Link href="/dashboard/pos/buy" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-4 md:p-5 rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <ShoppingCart size={18} />
               </div>
@@ -178,7 +178,7 @@ export default async function DashboardPage() {
           )}
 
           {canAddClient && (
-            <Link href="/dashboard/clients/new" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+            <Link href="/dashboard/clients/new" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-4 md:p-5 rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                 <UserPlus size={18} />
               </div>
@@ -190,7 +190,7 @@ export default async function DashboardPage() {
           )}
 
           {canEditTestimonials && (
-            <Link href="/dashboard/testimonials" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-5 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
+            <Link href="/dashboard/testimonials" className="bg-card hover:bg-pink-50/10 border border-border hover:border-primary/30 p-4 md:p-5 rounded-2xl md:rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300 group flex items-center justify-between">
               <div className="w-10 h-10 rounded-xl bg-secondary text-secondary-foreground flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <MessageSquare size={18} />
               </div>
@@ -205,9 +205,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* KPI Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
         
-        <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
+        <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
           <div className="flex justify-between items-start mb-4">
             <div className="p-4 bg-primary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors"><Users size={24}/></div>
             <span className="text-xs font-bold text-green-600 bg-green-150/10 border border-green-100 px-3 py-1 rounded-full flex items-center gap-1"><TrendingUp size={12}/> نشط</span>
@@ -217,7 +217,7 @@ export default async function DashboardPage() {
         </div>
 
         {canViewReports ? (
-          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
+          <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><CreditCard size={24}/></div>
               <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">اليوم</span>
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
             <p className="text-4xl font-black text-foreground">{todayRevenue} <span className="text-lg text-foreground/50">ج.م</span></p>
           </div>
         ) : (
-          <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
+          <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><MessageSquare size={24}/></div>
               <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">المراجعات</span>
@@ -236,7 +236,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="bg-card p-6 rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
+        <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
           <div className="flex justify-between items-start mb-4">
             <div className="p-4 bg-primary/10 text-primary rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors"><CalendarDays size={24}/></div>
             <span className="text-[10px] font-bold text-green-600 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full">مفعلة</span>
@@ -248,14 +248,14 @@ export default async function DashboardPage() {
       </div>
 
       {/* Main Grid: Analytics & Activities */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         
         {/* Left Column (Chart & Activity) */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 md:space-y-6">
           
           {/* Revenue Chart */}
           {canViewReports ? (
-            <div className="bg-card p-6 md:p-8 rounded-[2.5rem] border border-border shadow-sm">
+            <div className="bg-card p-4 sm:p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-primary/10 rounded-2xl text-primary">
@@ -282,7 +282,7 @@ export default async function DashboardPage() {
           )}
 
           {/* Recent Booking Activity Feed */}
-          <div className="bg-card p-6 rounded-[2.5rem] border border-border shadow-sm space-y-4">
+          <div className="bg-card p-4 sm:p-6 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-border/50 pb-4">
               <Link href="/dashboard/reception" className="text-xs font-black text-primary hover:underline flex items-center gap-1">
                 عرض الكل <ChevronLeft size={14} />
@@ -344,7 +344,7 @@ export default async function DashboardPage() {
         <div className="space-y-6">
           
           {/* Inventory Alerts Widget */}
-          <div className="bg-card p-6 rounded-[2.5rem] border border-border shadow-sm space-y-4">
+          <div className="bg-card p-4 sm:p-6 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-border/50 pb-4">
               <Link href="/dashboard/pos/inventory" className="text-xs font-black text-primary hover:underline flex items-center gap-1">
                 إدارة المخزون <ChevronLeft size={14} />
@@ -380,7 +380,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Testimonial Widget */}
-          <div className="bg-card p-6 rounded-[2.5rem] border border-border shadow-sm space-y-4">
+          <div className="bg-card p-4 sm:p-6 rounded-2xl md:rounded-[2.5rem] border border-border shadow-sm space-y-4">
             <div className="flex items-center justify-between border-b border-border/50 pb-4">
               <Link href="/dashboard/testimonials" className="text-xs font-black text-primary hover:underline flex items-center gap-1">
                 تعديل الآراء <ChevronLeft size={14} />
