@@ -59,7 +59,7 @@ export async function getAccountingSummary() {
   let totalExpenses = 0
 
   const allTx = await prisma.transaction.findMany()
-  allTx.forEach(tx => {
+  allTx.forEach((tx: any) => {
     if (tx.type === "REVENUE") totalRevenue += tx.amount
     else totalExpenses += tx.amount
   })
