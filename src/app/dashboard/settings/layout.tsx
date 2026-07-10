@@ -10,7 +10,7 @@ export default function SettingsLayout({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-12 h-12 bg-pink-50 text-primary rounded-2xl flex items-center justify-center border border-pink-100 shadow-sm">
+        <div className="w-12 h-12 bg-secondary text-primary rounded-2xl flex items-center justify-center border border-border shadow-sm">
           <Settings size={24} />
         </div>
         <div>

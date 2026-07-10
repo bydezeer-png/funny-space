@@ -49,9 +49,9 @@ export default async function LoginPage(props: {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-100/30 rounded-full blur-[130px] pointer-events-none -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-50/40 rounded-full blur-[130px] pointer-events-none -z-10"></div>
 
-      <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
+      <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-border/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
         {/* Floating Brand Logo */}
-        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-pink-100 bg-card p-1.5 shadow-md shadow-pink-200/10">
+        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-md shadow-pink-200/10">
           <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
         </div>
 
@@ -83,7 +83,7 @@ export default async function LoginPage(props: {
               type="email"
               name="email"
               required
-              className="w-full px-5 py-4 bg-background border border-pink-100/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
+              className="w-full px-5 py-4 bg-background border border-border/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
               placeholder="admin@funnyspace.com"
             />
           </div>
@@ -95,13 +95,13 @@ export default async function LoginPage(props: {
               type="password"
               name="password"
               required
-              className="w-full px-5 py-4 bg-background border border-pink-100/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
+              className="w-full px-5 py-4 bg-background border border-border/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
               placeholder="********"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-[#121212] hover:bg-primary text-white py-4 rounded-2xl font-black text-sm mt-3 transition-all duration-300 shadow-md shadow-pink-200/5 active:scale-[0.98] cursor-pointer"
+            className="w-full bg-foreground hover:bg-primary text-white py-4 rounded-2xl font-black text-sm mt-3 transition-all duration-300 shadow-md shadow-pink-200/5 active:scale-[0.98] cursor-pointer"
           >
             دخول للنظام
           </button>

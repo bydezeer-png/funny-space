@@ -122,10 +122,10 @@ export default async function DashboardPage() {
   }))
 
   const getServiceInfo = (e: any) => {
-    if (e.program) return { name: e.program.name, type: "برنامج", color: "bg-pink-50 text-primary border-pink-100" }
+    if (e.program) return { name: e.program.name, type: "برنامج", color: "bg-secondary text-primary border-border" }
     if (e.workshop) return { name: e.workshop.name, type: "ورشة عمل", color: "bg-orange-50 text-orange-600 border-orange-100" }
     if (e.event) return { name: e.event.name, type: "فعالية", color: "bg-purple-50 text-purple-600 border-purple-100" }
-    return { name: "خدمة غير محددة", type: "أخرى", color: "bg-muted/30 text-gray-500 border-gray-100" }
+    return { name: "خدمة غير محددة", type: "أخرى", color: "bg-muted/30 text-foreground/50 border-border" }
   }
 
   return (
@@ -220,7 +220,7 @@ export default async function DashboardPage() {
           <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><CreditCard size={24}/></div>
-              <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">اليوم</span>
+              <span className="text-[10px] font-bold text-primary bg-secondary border border-border px-2.5 py-1 rounded-full">اليوم</span>
             </div>
             <h3 className="text-foreground/60 text-sm font-bold mb-1">إيرادات الخزينة اليوم</h3>
             <p className="text-4xl font-black text-foreground">{todayRevenue} <span className="text-lg text-foreground/50">ج.م</span></p>
@@ -229,7 +229,7 @@ export default async function DashboardPage() {
           <div className="bg-card p-5 md:p-6 rounded-2xl md:rounded-[2rem] border border-border hover:border-primary/30 transition-all shadow-sm group">
             <div className="flex justify-between items-start mb-4">
               <div className="p-4 bg-secondary text-secondary-foreground rounded-2xl group-hover:bg-primary group-hover:text-primary-foreground transition-colors"><MessageSquare size={24}/></div>
-              <span className="text-[10px] font-bold text-primary bg-pink-50 border border-pink-100 px-2.5 py-1 rounded-full">المراجعات</span>
+              <span className="text-[10px] font-bold text-primary bg-secondary border border-border px-2.5 py-1 rounded-full">المراجعات</span>
             </div>
             <h3 className="text-foreground/60 text-sm font-bold mb-1">الآراء المفعلة بالموقع</h3>
             <p className="text-4xl font-black text-foreground">{activeTestimonialsCount} <span className="text-xs text-foreground/40 font-bold">/ {testimonialsCount} إجمالي</span></p>
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="bg-card p-8 rounded-[2.5rem] border border-border shadow-sm text-center py-16">
-              <div className="w-16 h-16 bg-pink-50 text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-pink-100">
+              <div className="w-16 h-16 bg-secondary text-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-border">
                 <Sparkles size={28} />
               </div>
               <h3 className="text-xl font-black text-foreground mb-2">أهلاً بكِ في لوحة القيادة لـ Soly's Space</h3>
@@ -304,7 +304,7 @@ export default async function DashboardPage() {
                       
                       {/* Right: User and service details */}
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-pink-50 border border-pink-100 text-primary flex items-center justify-center font-black text-xs shrink-0 select-none">
+                        <div className="w-10 h-10 rounded-xl bg-secondary border border-border text-primary flex items-center justify-center font-black text-xs shrink-0 select-none">
                           {e.client.name.trim().charAt(0)}
                         </div>
                         <div className="text-right min-w-0">
@@ -391,7 +391,7 @@ export default async function DashboardPage() {
               </div>
             </div>
 
-            <div className="flex justify-around items-center py-4 bg-pink-50/10 border border-pink-100/30 rounded-2xl">
+            <div className="flex justify-around items-center py-4 bg-pink-50/10 border border-border/30 rounded-2xl">
               <div className="text-center">
                 <p className="text-3xl font-black text-primary">{activeTestimonialsCount}</p>
                 <p className="text-[10px] font-black text-foreground/50 mt-1">النشطة بالموقع</p>

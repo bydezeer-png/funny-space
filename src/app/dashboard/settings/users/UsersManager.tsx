@@ -137,7 +137,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
     <div className="space-y-6">
       
       {/* Header and Actions */}
-      <div className="flex justify-between items-center bg-card p-6 rounded-[2rem] border border-pink-100/50 shadow-sm">
+      <div className="flex justify-between items-center bg-card p-6 rounded-[2rem] border border-border/50 shadow-sm">
         <div>
           <h2 className="text-2xl font-black text-foreground">الموظفون والصلاحيات</h2>
           <p className="text-xs text-foreground/45 font-bold mt-1">إدارة حسابات فريق عمل Soly's Space وصلاحيات الدخول.</p>
@@ -151,11 +151,11 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
       </div>
 
       {/* Users Table Card */}
-      <div className="bg-card border border-pink-100/50 rounded-[2.5rem] overflow-hidden shadow-sm">
+      <div className="bg-card border border-border/50 rounded-[2.5rem] overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-right border-collapse">
             <thead>
-              <tr className="bg-[#FFF5F8] border-b border-pink-50 text-foreground/60 text-xs">
+              <tr className="bg-secondary border-b border-border text-foreground/60 text-xs">
                 <th className="p-5 font-bold">الاسم</th>
                 <th className="p-5 font-bold">البريد الإلكتروني</th>
                 <th className="p-5 font-bold">الدور والمسؤولية</th>
@@ -165,14 +165,14 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
             </thead>
             <tbody className="divide-y divide-pink-50/50">
               {users.map(user => (
-                <tr key={user.id} className="hover:bg-[#FFF5F8]/45 transition-colors">
+                <tr key={user.id} className="hover:bg-secondary/45 transition-colors">
                   
                   {/* Name */}
                   <td className="p-5 font-black text-foreground">
                     <div className="flex items-center gap-2">
                       <span>{user.name}</span>
                       {user.id === currentUserId && (
-                        <span className="text-[10px] text-primary bg-pink-50 border border-pink-100/40 px-2 py-0.5 rounded-full font-bold">
+                        <span className="text-[10px] text-primary bg-secondary border border-border/40 px-2 py-0.5 rounded-full font-bold">
                           أنت
                         </span>
                       )}
@@ -257,18 +257,18 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
 
       {/* MODERN OUTLINE MODAL FORM */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-[#121212]/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
+        <div className="fixed inset-0 bg-foreground/30 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-card w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-border/50 p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[90vh]">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-center mb-6 border-b border-pink-50 pb-4">
+            <div className="flex justify-between items-center mb-6 border-b border-border pb-4">
               <h3 className="text-2xl font-black text-foreground">
                 {editingUser ? "تعديل بيانات الموظف" : "إضافة موظف جديد"}
               </h3>
               <button 
                 type="button" 
                 onClick={() => setIsModalOpen(false)} 
-                className="p-2 hover:bg-[#FFF5F8] rounded-full transition-colors text-foreground/60 border border-transparent hover:border-pink-100 cursor-pointer"
+                className="p-2 hover:bg-secondary rounded-full transition-colors text-foreground/60 border border-transparent hover:border-border cursor-pointer"
               >
                 <EyeOff size={18} className="hidden" /> {/* to satisfy linter for Eye icons just in case */}
                 <X size={20} />
@@ -285,7 +285,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                   type="text" 
                   value={form.name}
                   onChange={e => setForm({...form, name: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#FFF5F8] border border-pink-100/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all"
+                  className="w-full px-4 py-3 bg-secondary border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all"
                   placeholder="الاسم الكامل للموظف/ة"
                 />
               </div>
@@ -297,7 +297,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                   type="email" 
                   value={form.email}
                   onChange={e => setForm({...form, email: e.target.value})}
-                  className="w-full px-4 py-3 bg-[#FFF5F8] border border-pink-100/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all dir-ltr text-left"
+                  className="w-full px-4 py-3 bg-secondary border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all dir-ltr text-left"
                   placeholder="name@solyspace.com"
                 />
               </div>
@@ -306,7 +306,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                 <label className="block text-xs font-bold text-foreground/50 mb-2 flex justify-between items-center">
                   <span>كلمة المرور</span>
                   {editingUser && (
-                    <span className="text-[10px] text-primary font-bold bg-pink-50 border border-pink-100/30 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] text-primary font-bold bg-secondary border border-border/30 px-2 py-0.5 rounded-md">
                       اتركها فارغة إذا لم ترد تغييرها
                     </span>
                   )}
@@ -317,7 +317,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                     required={!editingUser}
                     value={form.password}
                     onChange={e => setForm({...form, password: e.target.value})}
-                    className="w-full px-4 py-3 pl-12 bg-[#FFF5F8] border border-pink-100/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all dir-ltr text-left"
+                    className="w-full px-4 py-3 pl-12 bg-secondary border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all dir-ltr text-left"
                     placeholder={editingUser ? "اتركها فارغة للمحافظة عليها..." : "******"}
                   />
                   <button 
@@ -337,7 +337,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                 <select 
                   value={form.role}
                   onChange={e => setForm({...form, role: e.target.value as Role})}
-                  className="w-full px-4 py-3 bg-[#FFF5F8] border border-pink-100/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all cursor-pointer"
+                  className="w-full px-4 py-3 bg-secondary border border-border/50 rounded-xl focus:ring-2 focus:ring-primary/10 outline-none text-sm font-semibold transition-all cursor-pointer"
                 >
                   <option value="RECEPTION">موظفة استقبال (تسجيل وحجوزات)</option>
                   <option value="INSTRUCTOR">مدربة (متابعة البرامج)</option>
@@ -348,7 +348,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
 
               {/* Granular Permissions Checklist */}
               {form.role !== 'ADMIN' && (
-                <div className="bg-[#FFF5F8] p-4.5 rounded-2xl border border-pink-100/35">
+                <div className="bg-secondary p-4.5 rounded-2xl border border-border/35">
                   <label className="block text-xs font-bold text-foreground mb-3 flex items-center gap-1.5">
                     <ShieldAlert size={14} className="text-primary" />
                     الصلاحيات التفصيلية (Granular Permissions)
@@ -362,8 +362,8 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                           key={perm} 
                           className={`flex items-center justify-between p-2.5 rounded-xl border cursor-pointer transition-all select-none ${
                             isChecked 
-                              ? 'bg-pink-50/50 border-primary text-primary font-black' 
-                              : 'bg-card border-pink-100/30 text-foreground/60 hover:text-foreground hover:border-pink-100/60 font-semibold'
+                              ? 'bg-secondary/50 border-primary text-primary font-black' 
+                              : 'bg-card border-border/30 text-foreground/60 hover:text-foreground hover:border-border/60 font-semibold'
                           }`}
                         >
                           <span className="text-xs">{getPermissionName(perm)}</span>
@@ -387,7 +387,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
               )}
 
               {/* Actions Footer */}
-              <div className="pt-4 flex gap-3 border-t border-pink-50">
+              <div className="pt-4 flex gap-3 border-t border-border">
                 <button 
                   type="submit" 
                   disabled={loading}
@@ -398,7 +398,7 @@ export default function UsersManager({ initialUsers, currentUserId }: { initialU
                 <button 
                   type="button" 
                   onClick={() => setIsModalOpen(false)}
-                  className="px-6 py-3 bg-[#FFF5F8] border border-pink-100/30 text-foreground/60 font-bold rounded-xl hover:bg-pink-50/40 hover:text-foreground transition-colors text-sm cursor-pointer"
+                  className="px-6 py-3 bg-secondary border border-border/30 text-foreground/60 font-bold rounded-xl hover:bg-secondary/40 hover:text-foreground transition-colors text-sm cursor-pointer"
                 >
                   إلغاء
                 </button>

@@ -14,7 +14,7 @@ export function SettingsTabs() {
   ]
 
   return (
-    <div className="bg-[#FFF5F8] border border-pink-100/50 p-1.5 rounded-2xl flex w-full max-w-max overflow-x-auto gap-2 shadow-inner">
+    <div className="bg-secondary border border-border/50 p-1.5 rounded-2xl flex w-full max-w-max overflow-x-auto gap-2 shadow-inner">
       {tabs.map(t => {
         let isMatch = false
         if (t.exact) {
@@ -29,8 +29,8 @@ export function SettingsTabs() {
             href={t.href}
             className={`shrink-0 px-5 py-2.5 rounded-xl font-black text-sm transition-all flex items-center gap-2 ${
               isMatch 
-                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
-                : 'text-foreground/50 hover:text-foreground border border-transparent hover:bg-pink-50/50'
+                ? 'bg-card text-primary shadow-sm border border-border/40' 
+                : 'text-foreground/50 hover:text-foreground border border-transparent hover:bg-secondary/50'
             }`}
           >
             {t.icon}

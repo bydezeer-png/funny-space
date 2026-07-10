@@ -23,7 +23,7 @@ export default async function SettingsPage() {
   const settings = await getSystemSettings()
 
   return (
-    <div className="bg-card border border-pink-100/50 rounded-[2rem] p-6 sm:p-8 shadow-sm max-w-4xl">
+    <div className="bg-card border border-border/50 rounded-[2rem] p-6 sm:p-8 shadow-sm max-w-4xl">
       <div className="mb-8">
         <h2 className="text-2xl font-black text-foreground mb-2">معلومات المكان والتواصل</h2>
         <p className="text-foreground/60 font-semibold">تُستخدم هذه المعلومات لعرضها للعملاء في واجهة الحجز وتفاصيل الدفع.</p>

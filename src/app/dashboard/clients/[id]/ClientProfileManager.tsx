@@ -79,7 +79,7 @@ export default function ClientProfileManager({
           {canEdit && (
             <button
               onClick={() => setIsEditOpen(true)}
-              className="flex-1 sm:flex-initial bg-[#121212] hover:bg-primary text-white px-5 py-3 rounded-2xl font-black text-sm transition-all shadow-sm hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+              className="flex-1 sm:flex-initial bg-foreground hover:bg-primary text-white px-5 py-3 rounded-2xl font-black text-sm transition-all shadow-sm hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
               <Edit3 size={16} />
               تعديل البيانات
@@ -147,7 +147,7 @@ export default function ClientProfileManager({
         </div>
         
         {client.notes ? (
-          <div className="bg-[#FFF5F8] border border-pink-100/50 p-6 rounded-3xl text-foreground/80 font-medium text-base leading-relaxed whitespace-pre-line relative">
+          <div className="bg-secondary border border-border/50 p-6 rounded-3xl text-foreground/80 font-medium text-base leading-relaxed whitespace-pre-line relative">
             <div className="absolute top-4 left-4 text-pink-200 opacity-20 text-4xl select-none font-serif">"</div>
             {client.notes}
           </div>
@@ -245,7 +245,7 @@ export default function ClientProfileManager({
 
       {/* Edit Modal */}
       {isEditOpen && (
-        <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-foreground/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
           <div className="bg-card w-full max-w-xl rounded-[2.5rem] border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 text-right">
             
             <div className="p-6 border-b border-border/50 flex justify-between items-center bg-gradient-to-l from-pink-50/20 to-transparent">
@@ -340,7 +340,7 @@ export default function ClientProfileManager({
 
       {/* Delete Confirmation Modal */}
       {isDeleteOpen && (
-        <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-foreground/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
           <div className="bg-card w-full max-w-md rounded-[2.5rem] border border-border shadow-2xl p-6 animate-in zoom-in-95 duration-300 text-right space-y-4">
             
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100/50">

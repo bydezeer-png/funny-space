@@ -111,7 +111,7 @@ export default function ScannerClient() {
                 <div key={idx} className="p-4 bg-background border border-border rounded-2xl flex items-center justify-between gap-4 animate-in slide-in-from-top-3 duration-300">
                   <div className="text-left shrink-0">
                     <span className="text-[10px] font-black text-foreground/40 block">{ci.time}</span>
-                    <span className="text-[9px] font-black bg-pink-50 text-primary border border-pink-100 px-2 py-0.5 rounded-md mt-1 inline-block">
+                    <span className="text-[9px] font-black bg-secondary text-primary border border-border px-2 py-0.5 rounded-md mt-1 inline-block">
                       متبقي: {ci.remaining}
                     </span>
                   </div>

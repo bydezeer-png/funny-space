@@ -53,10 +53,10 @@ export default function ClientLoginPage() {
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-pink-100/30 rounded-full blur-[130px] pointer-events-none -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-pink-50/40 rounded-full blur-[130px] pointer-events-none -z-10"></div>
 
-      <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-pink-100/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
+      <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-border/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
         
         {/* Floating Brand Logo */}
-        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-pink-100 bg-card p-1.5 shadow-md shadow-pink-200/10">
+        <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-md shadow-pink-200/10">
           <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
         </div>
 
@@ -88,7 +88,7 @@ export default function ClientLoginPage() {
                 required
                 dir="ltr"
                 placeholder="01xxxxxxxxx"
-                className="w-full px-5 py-4 pl-12 bg-background border border-pink-100/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
+                className="w-full px-5 py-4 pl-12 bg-background border border-border/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
               />
               <Phone size={18} className="absolute left-4 top-4.5 text-foreground/30" />
             </div>
@@ -106,13 +106,13 @@ export default function ClientLoginPage() {
                 required
                 dir="ltr"
                 placeholder="••••••••"
-                className="w-full px-5 py-4 pl-12 bg-background border border-pink-100/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
+                className="w-full px-5 py-4 pl-12 bg-background border border-border/60 rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all text-left font-mono font-bold shadow-sm"
               />
               <Lock size={18} className="absolute left-4 top-4.5 text-foreground/30" />
             </div>
             
             {/* Helpful Hint Badge */}
-            <div className="text-xs text-primary font-bold mt-4 text-center bg-pink-50/40 p-3 rounded-2xl border border-pink-100/40 flex items-center justify-center gap-1.5">
+            <div className="text-xs text-primary font-bold mt-4 text-center bg-pink-50/40 p-3 rounded-2xl border border-border/40 flex items-center justify-center gap-1.5">
               <Heart size={12} className="animate-pulse text-primary shrink-0" />
               <span>تلميح: كلمة المرور الافتراضية لحسابكِ هي رقم هاتفكِ</span>
             </div>

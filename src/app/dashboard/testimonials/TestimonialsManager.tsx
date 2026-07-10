@@ -183,7 +183,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
         {/* Add Testimonial Button */}
         <button
           onClick={handleOpenAddModal}
-          className="w-full md:w-auto bg-[#121212] hover:bg-primary text-white px-6 py-3.5 rounded-2xl font-black text-sm transition-all shadow-md hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group"
+          className="w-full md:w-auto bg-foreground hover:bg-primary text-white px-6 py-3.5 rounded-2xl font-black text-sm transition-all shadow-md hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 group"
         >
           <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
           إضافة رأي جديد
@@ -193,7 +193,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
       {/* Grid of Testimonials */}
       {filteredTestimonials.length === 0 ? (
         <div className="bg-card p-16 rounded-[2rem] border border-border shadow-sm text-center flex flex-col items-center justify-center">
-          <div className="w-16 h-16 rounded-2xl bg-pink-50 flex items-center justify-center text-primary mb-4 border border-pink-100/50">
+          <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center text-primary mb-4 border border-border/50">
             <AlertCircle size={28} />
           </div>
           <h3 className="text-xl font-black text-foreground mb-1">لا توجد آراء مطابقة</h3>
@@ -242,7 +242,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
                   <button
                     onClick={() => handleOpenEditModal(t)}
                     title="تعديل"
-                    className="p-2 rounded-xl border border-border bg-background hover:bg-pink-50 hover:text-primary hover:border-primary/30 transition-all text-foreground/60"
+                    className="p-2 rounded-xl border border-border bg-background hover:bg-secondary hover:text-primary hover:border-primary/30 transition-all text-foreground/60"
                   >
                     <Edit3 size={15} />
                   </button>
@@ -280,7 +280,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
 
       {/* Add / Edit Modal */}
       {isOpen && (
-        <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-foreground/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
           <div className="bg-card w-full max-w-xl rounded-[2.5rem] border border-border shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 text-right">
             
             {/* Modal Header */}
@@ -411,7 +411,7 @@ export default function TestimonialsManager({ initialTestimonials }: Testimonial
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmId && (
-        <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+        <div className="fixed inset-0 bg-foreground/40 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
           <div className="bg-card w-full max-w-md rounded-[2.5rem] border border-border shadow-2xl p-6 animate-in zoom-in-95 duration-300 text-right">
             
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-4 border border-red-100/50">

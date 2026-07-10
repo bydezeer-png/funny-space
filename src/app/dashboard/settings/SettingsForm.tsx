@@ -75,7 +75,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               value={form.whatsappNumber}
               onChange={e => setForm({...form, whatsappNumber: e.target.value})}
               placeholder="مثال: 01012345678"
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
+              className="w-full bg-secondary/50 border border-border/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
               dir="ltr"
             />
           </div>
@@ -91,7 +91,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               onChange={e => setForm({...form, address: e.target.value})}
               placeholder="اكتب عنوان المكان بالتفصيل..."
               rows={2}
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl pr-12 pl-4 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner resize-none"
+              className="w-full bg-secondary/50 border border-border/60 rounded-xl pr-12 pl-4 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner resize-none"
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
               value={form.mapLink}
               onChange={e => setForm({...form, mapLink: e.target.value})}
               placeholder="https://maps.google.com/..."
-              className="w-full bg-[#FFF5F8]/50 border border-pink-100/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
+              className="w-full bg-secondary/50 border border-border/60 rounded-xl px-12 py-3.5 text-sm font-semibold outline-none focus:border-primary focus:bg-card transition-all shadow-inner text-left"
               dir="ltr"
             />
           </div>
@@ -115,7 +115,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
       </div>
 
       {/* Payment Methods Info */}
-      <div className="pt-6 border-t border-pink-50">
+      <div className="pt-6 border-t border-border">
         <div className="flex justify-between items-center mb-4">
           <div>
             <label className="block text-sm font-black text-foreground flex items-center gap-2">
@@ -127,7 +127,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
           <button 
             type="button" 
             onClick={addMethod}
-            className="text-xs font-bold bg-pink-50 text-primary hover:bg-pink-100 px-3 py-2 rounded-lg flex items-center gap-1 transition-colors"
+            className="text-xs font-bold bg-secondary text-primary hover:bg-secondary px-3 py-2 rounded-lg flex items-center gap-1 transition-colors"
           >
             <Plus size={14} /> إضافة طريقة
           </button>
@@ -135,12 +135,12 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
 
         <div className="space-y-4">
           {methods.length === 0 && (
-            <div className="text-center p-6 border border-dashed border-pink-200 rounded-2xl text-foreground/40 font-bold text-sm">
+            <div className="text-center p-6 border border-dashed border-border rounded-2xl text-foreground/40 font-bold text-sm">
               لا توجد طرق دفع مضافة. (الدفع عند الحضور فقط)
             </div>
           )}
           {methods.map((m, index) => (
-            <div key={m.id} className="bg-card border border-pink-100/80 rounded-2xl p-5 flex gap-4 shadow-sm relative group">
+            <div key={m.id} className="bg-card border border-border/80 rounded-2xl p-5 flex gap-4 shadow-sm relative group">
               <button 
                 type="button"
                 onClick={() => removeMethod(m.id)}
@@ -157,7 +157,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       type="text"
                       value={m.name}
                       onChange={e => updateMethod(m.id, 'name', e.target.value)}
-                      className="w-full bg-[#FFF5F8]/30 border border-pink-100/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary"
+                      className="w-full bg-secondary/30 border border-border/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary"
                     />
                   </div>
                   <div>
@@ -166,7 +166,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       type="text"
                       value={m.account}
                       onChange={e => updateMethod(m.id, 'account', e.target.value)}
-                      className="w-full bg-[#FFF5F8]/30 border border-pink-100/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary dir-ltr text-left"
+                      className="w-full bg-secondary/30 border border-border/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary dir-ltr text-left"
                       placeholder="010... أو @user"
                     />
                   </div>
@@ -179,7 +179,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       type="url"
                       value={m.link}
                       onChange={e => updateMethod(m.id, 'link', e.target.value)}
-                      className="w-full bg-[#FFF5F8]/30 border border-pink-100/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary dir-ltr text-left"
+                      className="w-full bg-secondary/30 border border-border/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary dir-ltr text-left"
                       placeholder="https://..."
                     />
                   </div>
@@ -189,7 +189,7 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
                       type="text"
                       value={m.note}
                       onChange={e => updateMethod(m.id, 'note', e.target.value)}
-                      className="w-full bg-[#FFF5F8]/30 border border-pink-100/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary"
+                      className="w-full bg-secondary/30 border border-border/50 rounded-lg px-3 py-2 text-sm font-semibold outline-none focus:border-primary"
                       placeholder="برجاء إرسال إيصال الدفع..."
                     />
                   </div>
@@ -200,11 +200,11 @@ export default function SettingsForm({ initialSettings }: { initialSettings: any
         </div>
       </div>
 
-      <div className="pt-2 border-t border-pink-50 flex justify-end">
+      <div className="pt-2 border-t border-border flex justify-end">
         <button 
           type="submit" 
           disabled={loading}
-          className="bg-[#121212] hover:bg-primary text-white py-3.5 px-8 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-[0_10px_25px_rgba(236,72,153,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          className="bg-foreground hover:bg-primary text-white py-3.5 px-8 rounded-xl font-black text-sm flex items-center justify-center gap-2 shadow-md hover:shadow-[0_10px_25px_rgba(236,72,153,0.3)] transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
         >
           <Save size={18} />
           {loading ? "جاري الحفظ..." : "حفظ الإعدادات"}

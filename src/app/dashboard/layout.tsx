@@ -41,7 +41,7 @@ export default async function DashboardLayout({
       <aside className="w-64 bg-card border-l border-border flex flex-col shadow-2xl fixed inset-y-0 right-0 z-50 transform translate-x-full peer-checked:translate-x-0 transition-transform duration-300 ease-in-out md:static md:translate-x-0 md:flex">
         <div className="p-6 flex items-center justify-between border-b border-border/50 w-full">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 overflow-hidden rounded-xl border border-pink-100 bg-card p-1 shadow-sm shrink-0">
+            <div className="w-12 h-12 overflow-hidden rounded-xl border border-border bg-card p-1 shadow-sm shrink-0">
               <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
             </div>
             <div className="text-right">
@@ -146,7 +146,7 @@ export default async function DashboardLayout({
              <label htmlFor="dashboard-sidebar-toggle" className="cursor-pointer p-2 hover:bg-border/30 rounded-lg text-foreground">
                <Menu size={20} />
              </label>
-             <div className="w-9 h-9 overflow-hidden rounded-xl border border-pink-100 bg-card p-0.5 shadow-xs shrink-0">
+             <div className="w-9 h-9 overflow-hidden rounded-xl border border-border bg-card p-0.5 shadow-xs shrink-0">
                <img src="/logo.png" alt="Soly's Space" className="w-full h-full object-contain" />
              </div>
              <h1 className="text-lg font-black tracking-tight text-foreground leading-none font-display">Soly's Space</h1>

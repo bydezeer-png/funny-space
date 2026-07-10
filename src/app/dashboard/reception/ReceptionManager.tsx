@@ -109,24 +109,24 @@ export default function ReceptionManager({
       name: `${e.program.name} ${e.option ? '- ' + e.option.name : ''}`, 
       price: e.option ? e.option.price : 0, 
       icon: <CalendarDays size={14}/>, 
-      color: "text-pink-600 bg-pink-50 border-pink-100" 
+      color: "text-pink-600 bg-secondary border-border" 
     }
     if (e.workshop) return { type: "ورشة تدريبية", name: e.workshop.name, price: e.workshop.price, icon: <Calendar size={14}/>, color: "text-orange-600 bg-orange-50 border-orange-100" }
     if (e.event) return { type: "فعالية / حفلة", name: e.event.name, price: e.event.price, icon: <PartyPopper size={14}/>, color: "text-purple-600 bg-purple-50 border-purple-100" }
-    return { type: "خدمة مجهولة", name: "غير محدد", price: 0, icon: null, color: "text-gray-500 bg-muted/30 border-gray-100" }
+    return { type: "خدمة مجهولة", name: "غير محدد", price: 0, icon: null, color: "text-foreground/50 bg-muted/30 border-border" }
   }
 
   return (
     <div className="space-y-8">
       
       {/* Premium Segmented Tab Controller */}
-      <div className="bg-[#FFF5F8] border border-pink-100/50 p-1.5 rounded-2xl flex w-max gap-2 shadow-inner">
+      <div className="bg-secondary border border-border/50 p-1.5 rounded-2xl flex w-max gap-2 shadow-inner">
         {showPendingTab && (
           <button 
             onClick={() => setActiveTab("pending")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'pending' 
-                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-border/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -140,7 +140,7 @@ export default function ReceptionManager({
             onClick={() => setActiveTab("confirmed")}
             className={`px-6 py-3 rounded-xl font-black text-sm transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'confirmed' 
-                ? 'bg-card text-primary shadow-sm border border-pink-100/40' 
+                ? 'bg-card text-primary shadow-sm border border-border/40' 
                 : 'text-foreground/50 hover:text-foreground border border-transparent'
             }`}
           >
@@ -161,16 +161,16 @@ export default function ReceptionManager({
           return (
             <div 
               key={e.id} 
-              className="bg-card border border-pink-100/50 rounded-[2rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
+              className="bg-card border border-border/50 rounded-[2rem] p-6 shadow-sm hover:shadow-[0_12px_45px_rgba(236,72,153,0.06)] hover:border-primary/20 transition-all duration-300 flex flex-col justify-between relative group"
             >
               
               <div>
                 
                 {/* Card Header (Client Profile with Quick WhatsApp Button) */}
-                <div className="flex items-center justify-between border-b border-pink-50 pb-4 mb-4 gap-3">
+                <div className="flex items-center justify-between border-b border-border pb-4 mb-4 gap-3">
                   <div className="flex items-center gap-3">
                     {/* User Avatar Circle */}
-                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary/10 to-pink-500/10 text-primary flex items-center justify-center font-black border border-pink-100 shadow-inner select-none shrink-0">
+                    <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary/10 to-pink-500/10 text-primary flex items-center justify-center font-black border border-border shadow-inner select-none shrink-0">
                       {clientLetter}
                     </div>
                     
@@ -207,7 +207,7 @@ export default function ReceptionManager({
                 </div>
 
                 {/* Service Info Box */}
-                <div className="bg-[#FFF5F8]/60 border border-pink-100/30 rounded-2xl p-4 mb-4">
+                <div className="bg-secondary/60 border border-border/30 rounded-2xl p-4 mb-4">
                   <p className="font-black text-foreground text-sm leading-snug mb-1.5">{service.name}</p>
                   <div className="flex justify-between items-baseline">
                     <span className="text-[10px] font-bold text-foreground/40">سعر الخدمة</span>
@@ -217,12 +217,12 @@ export default function ReceptionManager({
 
                 {/* Active Subscriptions Attendance progress */}
                 {activeTab === 'confirmed' && e.program && (
-                  <div className="mb-4 space-y-2 bg-pink-50/5 border border-pink-100/25 p-3 rounded-2xl">
+                  <div className="mb-4 space-y-2 bg-pink-50/5 border border-border/25 p-3 rounded-2xl">
                     <div className="flex justify-between items-center text-xs font-bold text-foreground/60">
                       <span>حضور الحصص: {e.attendances.length} من {e.option?.sessionsPerMonth || 8}</span>
                       <span className="text-primary">{Math.min(100, Math.round((e.attendances.length / (e.option?.sessionsPerMonth || 8)) * 100))}%</span>
                     </div>
-                    <div className="w-full bg-[#FFF5F8] rounded-full h-2 border border-pink-100/35 overflow-hidden">
+                    <div className="w-full bg-secondary rounded-full h-2 border border-border/35 overflow-hidden">
                       <div 
                         className="bg-green-500 h-full rounded-full transition-all duration-500" 
                         style={{width: `${Math.min(100, (e.attendances.length / (e.option?.sessionsPerMonth || 8)) * 100)}%`}}
@@ -233,7 +233,7 @@ export default function ReceptionManager({
               </div>
               
               {/* Card Footer controls */}
-              <div className="border-t border-pink-50 pt-4 mt-auto space-y-3">
+              <div className="border-t border-border pt-4 mt-auto space-y-3">
                 {activeTab === 'pending' ? (
                   /* Pending Reservation Options */
                   <div className="space-y-3">
@@ -243,7 +243,7 @@ export default function ReceptionManager({
                         <select 
                           value={paymentMethod} 
                           onChange={(ev) => setPaymentMethod(ev.target.value)} 
-                          className="w-full bg-[#FFF5F8] border border-pink-100/50 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-primary transition-all cursor-pointer"
+                          className="w-full bg-secondary border border-border/50 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-primary transition-all cursor-pointer"
                         >
                           <option value="CASH">دفع نقدي (كاش)</option>
                           <option value="POS">دفع بالفيزا (POS)</option>
@@ -279,7 +279,7 @@ export default function ReceptionManager({
                   /* Active Subscription Options & Financials */
                   <div className="space-y-3">
                     {/* Financial Status Summary */}
-                    <div className="flex justify-between items-center text-xs font-bold bg-[#FFF5F8]/60 p-3 rounded-2xl border border-pink-100/25">
+                    <div className="flex justify-between items-center text-xs font-bold bg-secondary/60 p-3 rounded-2xl border border-border/25">
                       <div className="text-foreground/55">
                         المدفوع: <span className="text-green-600 font-black">{e.amountPaid || 0} ج.م</span>
                       </div>
@@ -301,7 +301,7 @@ export default function ReceptionManager({
                       <button 
                         onClick={() => handlePayRemaining(e.id, remaining)}
                         disabled={loading === `pay-${e.id}`}
-                        className="w-full bg-pink-50 hover:bg-primary hover:text-white text-primary py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 border border-pink-100 active:scale-95 cursor-pointer"
+                        className="w-full bg-secondary hover:bg-primary hover:text-white text-primary py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-1.5 border border-border active:scale-95 cursor-pointer"
                       >
                         <Banknote size={14} />
                         {loading === `pay-${e.id}` ? "جاري التسجيل..." : "سداد المبلغ المتبقي"}
@@ -314,7 +314,7 @@ export default function ReceptionManager({
                         <button 
                           onClick={() => handleAttendance(e.id, false)}
                           disabled={loading === `att-${e.id}`}
-                          className="flex-1 bg-[#121212] hover:bg-primary text-white py-3 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
+                          className="flex-1 bg-foreground hover:bg-primary text-white py-3 rounded-xl font-black text-xs flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all cursor-pointer"
                         >
                           <UserCheck size={15} /> تسجيل حضور
                         </button>
@@ -342,8 +342,8 @@ export default function ReceptionManager({
       
       {/* Empty State */}
       {(activeTab === 'pending' ? pending : confirmed).length === 0 && (
-        <div className="text-center py-24 bg-[#FFF5F8]/40 border border-dashed border-pink-100 rounded-[2.5rem] max-w-xl mx-auto">
-          <div className="w-16 h-16 rounded-full bg-pink-50/50 flex items-center justify-center mx-auto mb-4 border border-pink-100/30">
+        <div className="text-center py-24 bg-secondary/40 border border-dashed border-border rounded-[2.5rem] max-w-xl mx-auto">
+          <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mx-auto mb-4 border border-border/30">
             <Sparkles size={24} className="text-primary/45" />
           </div>
           <h4 className="text-lg font-black text-foreground mb-1">القسم فارغ حالياً</h4>

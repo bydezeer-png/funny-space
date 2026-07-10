@@ -72,14 +72,14 @@ export default async function ClientPortalPage() {
   const days = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
 
   return (
-    <div className="min-h-screen bg-[#FFF5F8] relative selection:bg-primary/30 selection:text-primary-foreground font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-secondary relative selection:bg-primary/30 selection:text-primary-foreground font-sans overflow-x-hidden">
       
       {/* Decorative Glows */}
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-pink-100/30 rounded-full blur-[120px] pointer-events-none -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-pink-50/40 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
       {/* Portal Navbar */}
-      <nav className="bg-card/80 backdrop-blur-md border-b border-pink-100/50 sticky top-0 z-50">
+      <nav className="bg-card/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-pink-300 p-[1px] shadow-sm">
@@ -97,7 +97,7 @@ export default async function ClientPortalPage() {
           }}>
             <button 
               type="submit"
-              className="flex items-center gap-2 bg-pink-50 text-primary hover:bg-primary hover:text-white px-4 py-2.5 rounded-xl text-xs font-black transition-all border border-pink-100/50"
+              className="flex items-center gap-2 bg-pink-50 text-primary hover:bg-primary hover:text-white px-4 py-2.5 rounded-xl text-xs font-black transition-all border border-border/50"
             >
               <LogOut size={14} /> تسجيل الخروج
             </button>
@@ -109,7 +109,7 @@ export default async function ClientPortalPage() {
       <main className="max-w-5xl mx-auto px-6 py-10 space-y-10">
         
         {/* Welcome Profile Card */}
-        <section className="bg-card border border-pink-100/70 rounded-[2rem] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <section className="bg-card border border-border/70 rounded-[2rem] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="absolute -top-10 -right-10 w-28 h-28 bg-pink-50 rounded-full blur-2xl opacity-60"></div>
           
           <div className="flex items-center gap-4 text-center sm:text-right flex-col sm:flex-row">
@@ -142,17 +142,17 @@ export default async function ClientPortalPage() {
         {/* Stats Grid */}
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {/* Stat 1 */}
-          <div className="bg-card border border-pink-100/70 p-6 rounded-3xl shadow-sm text-center">
+          <div className="bg-card border border-border/70 p-6 rounded-3xl shadow-sm text-center">
             <span className="text-xs font-black text-foreground/40 block mb-2">الاشتراكات الفعالة</span>
             <div className="text-3xl font-black text-primary">{confirmedEnrollments.length}</div>
           </div>
           {/* Stat 2 */}
-          <div className="bg-card border border-pink-100/70 p-6 rounded-3xl shadow-sm text-center">
+          <div className="bg-card border border-border/70 p-6 rounded-3xl shadow-sm text-center">
             <span className="text-xs font-black text-foreground/40 block mb-2">إجمالي الحضور</span>
             <div className="text-3xl font-black text-green-500">{totalAttendances} حصة</div>
           </div>
           {/* Stat 3 */}
-          <div className="bg-card border border-pink-100/70 p-6 rounded-3xl shadow-sm text-center">
+          <div className="bg-card border border-border/70 p-6 rounded-3xl shadow-sm text-center">
             <span className="text-xs font-black text-foreground/40 block mb-2">المستحقات المالية المتبقية</span>
             <div className="text-3xl font-black text-orange-500">{totalRemainingBalance} ج.م</div>
           </div>
@@ -165,7 +165,7 @@ export default async function ClientPortalPage() {
           </h3>
 
           {client.enrollments.length === 0 ? (
-            <div className="bg-card border border-pink-100/70 rounded-3xl p-12 text-center text-foreground/50 font-bold">
+            <div className="bg-card border border-border/70 rounded-3xl p-12 text-center text-foreground/50 font-bold">
               لا توجد اشتراكات مسجلة حالياً. تفضلي بزيارة جدول الحصص لحجز برنامجكِ الأول!
             </div>
           ) : (
@@ -209,7 +209,7 @@ export default async function ClientPortalPage() {
                 return (
                   <div 
                     key={e.id} 
-                    className="bg-card border border-pink-100/70 rounded-[2rem] p-6 shadow-sm flex flex-col md:flex-row justify-between items-stretch gap-6 relative overflow-hidden"
+                    className="bg-card border border-border/70 rounded-[2rem] p-6 shadow-sm flex flex-col md:flex-row justify-between items-stretch gap-6 relative overflow-hidden"
                   >
                     
                     {/* Right column: Name, Type, Schedule, Attendance Progress */}
@@ -244,7 +244,7 @@ export default async function ClientPortalPage() {
 
                       {/* Display schedules for programs */}
                       {e.option && e.option.schedules.length > 0 && (
-                        <div className="text-xs font-semibold bg-[#FFF5F8] border border-pink-100/30 rounded-xl p-3 inline-flex flex-wrap gap-x-4 gap-y-1.5 w-max">
+                        <div className="text-xs font-semibold bg-secondary border border-border/30 rounded-xl p-3 inline-flex flex-wrap gap-x-4 gap-y-1.5 w-max">
                           <span className="text-primary font-black flex items-center gap-1 shrink-0"><CalendarDays size={13}/> مواعيدكِ:</span>
                           {e.option.schedules.map((sch, i) => (
                             <span key={i} className="text-foreground/75">
@@ -261,7 +261,7 @@ export default async function ClientPortalPage() {
                             <span className="flex items-center gap-1"><UserCheck size={14} className="text-green-500" /> الحصص المستهلكة</span>
                             <span>{e.attendances.length} من أصل {totalSessions} حصة</span>
                           </div>
-                          <div className="w-full bg-pink-50/50 rounded-full h-2.5 border border-pink-100/30">
+                          <div className="w-full bg-pink-50/50 rounded-full h-2.5 border border-border/30">
                             <div 
                               className="bg-green-500 h-full rounded-full transition-all duration-500" 
                               style={{ width: `${Math.min(100, (e.attendances.length / totalSessions) * 100)}%` }}
