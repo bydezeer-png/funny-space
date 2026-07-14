@@ -66,7 +66,9 @@ export default function ClientPortal({ programs, categories, events, workshops, 
           birthDate: clientForm.birthDate ? new Date(clientForm.birthDate).toISOString() : null,
           type: bookingItem.type,
           itemId: bookingItem.item.id,
-          optionId: bookingItem.option?.id
+          optionId: bookingItem.option?.id,
+          paymentMethod: selectedMethodId ? parsedPaymentMethods.find((m: any) => m.id === selectedMethodId)?.name || null : null,
+          totalAmount: bookingItem.option ? bookingItem.option.price : bookingItem.item.price,
         })
       })
       
@@ -85,6 +87,7 @@ export default function ClientPortal({ programs, categories, events, workshops, 
     setBookingItem(null)
     setSuccessMsg("")
     setClientForm({ name: "", phone: "", birthDate: "" })
+    setSelectedMethodId(null)
   }
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
@@ -637,8 +640,8 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                       <label className="block text-xs font-black text-foreground/70 mb-2">💳 Choose Payment Method</label>
                       <div className="space-y-2">
                         {parsedPaymentMethods.map((m: any) => (
-                          <div key={m.id} className="border border-pink-100/50 rounded-xl overflow-hidden transition-all">
-                            <label className="flex items-center justify-start gap-3 p-3 cursor-pointer bg-white hover:bg-pink-50/30">
+                          <div key={m.id} className={`border rounded-xl overflow-hidden transition-all ${selectedMethodId === m.id ? 'border-primary/50 shadow-sm' : 'border-border/50'}`}>
+                            <label className="flex items-center justify-start gap-3 p-3 cursor-pointer bg-card hover:bg-secondary/30">
                               <input 
                                 type="radio" 
                                 name="paymentMethod" 
@@ -647,14 +650,14 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                                 onChange={() => setSelectedMethodId(m.id)}
                                 className="w-4 h-4 text-primary focus:ring-primary/20 accent-primary"
                               />
-                              <span className="font-bold text-sm text-[#121212]">{m.name}</span>
+                              <span className="font-bold text-sm text-foreground">{m.name}</span>
                             </label>
                             {selectedMethodId === m.id && (
-                              <div className="bg-[#FFF5F8] p-4 text-xs font-semibold text-foreground/80 border-t border-pink-100/50 text-left space-y-3">
+                              <div className="bg-secondary p-4 text-xs font-semibold text-foreground/80 border-t border-border/50 text-left space-y-3">
                                 {m.account && (
                                   <div className="flex items-center justify-between gap-4">
                                     <span className="text-foreground/50 font-bold text-[10px] uppercase">Account Number / User</span>
-                                    <span className="font-mono text-sm font-black bg-white px-3 py-1.5 rounded-lg border border-pink-100 inline-block select-all">{m.account}</span>
+                                    <span className="font-mono text-sm font-black bg-card px-3 py-1.5 rounded-lg border border-border inline-block select-all">{m.account}</span>
                                   </div>
                                 )}
                                 {m.link && (
@@ -664,11 +667,10 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                                   </div>
                                 )}
                                 {m.note && (
-                                  <div className="text-[11px] text-foreground/60 bg-pink-50/50 p-2.5 rounded-lg border border-pink-100/30">
+                                  <div className="text-[11px] text-foreground/60 bg-secondary/50 p-2.5 rounded-lg border border-border/30">
                                     💡 {m.note}
                                   </div>
                                 )}
-                                {/* Fallback for old details format if any */}
                                 {!m.account && !m.link && !m.note && m.details && (
                                   <div className="whitespace-pre-line">{m.details}</div>
                                 )}
@@ -676,10 +678,30 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                             )}
                           </div>
                         ))}
+
+                        {/* Pay at Reception option */}
+                        <div className={`border rounded-xl overflow-hidden transition-all ${selectedMethodId === 'CASH_AT_RECEPTION' ? 'border-primary/50 shadow-sm' : 'border-border/50'}`}>
+                          <label className="flex items-center justify-start gap-3 p-3 cursor-pointer bg-card hover:bg-secondary/30">
+                            <input 
+                              type="radio" 
+                              name="paymentMethod" 
+                              value="CASH_AT_RECEPTION" 
+                              checked={selectedMethodId === 'CASH_AT_RECEPTION'}
+                              onChange={() => setSelectedMethodId('CASH_AT_RECEPTION')}
+                              className="w-4 h-4 text-primary focus:ring-primary/20 accent-primary"
+                            />
+                            <span className="font-bold text-sm text-foreground">💵 Pay at Reception</span>
+                          </label>
+                          {selectedMethodId === 'CASH_AT_RECEPTION' && (
+                            <div className="bg-secondary p-3 text-[11px] font-semibold text-foreground/60 border-t border-border/50 text-left">
+                              You can pay cash or by card when you arrive at Soly's Space reception.
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-4 text-[10px] font-bold text-foreground/50 bg-[#FFF5F8] border border-pink-100/35 px-4.5 py-2.5 rounded-2xl text-center w-full leading-relaxed">
+                    <div className="mt-4 text-[10px] font-bold text-foreground/50 bg-secondary border border-border/35 px-4.5 py-2.5 rounded-2xl text-center w-full leading-relaxed">
                       💡 You can pay later at the Space reception to confirm and activate your booking.
                     </div>
                   )}

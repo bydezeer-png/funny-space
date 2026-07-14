@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(request: Request) {
   try {
-    const { name, phone, type, itemId, optionId, birthDate } = await request.json()
+    const { name, phone, type, itemId, optionId, birthDate, paymentMethod, totalAmount } = await request.json()
 
     if (!name || !phone || !type || !itemId) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -31,7 +31,9 @@ export async function POST(request: Request) {
     // 2. Create Enrollment
     const enrollmentData: any = {
       clientId: client.id,
-      status: "PENDING"
+      status: "PENDING",
+      paymentMethod: paymentMethod || null,
+      totalAmount: totalAmount || 0,
     }
 
     if (type === "PROGRAM") {
