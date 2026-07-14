@@ -34,12 +34,14 @@ import {
 } from "lucide-react"
 
 export default async function Home() {
-  const programs = await getPrograms()
-  const categories = await getProgramCategories()
-  const events = await getEvents()
-  const workshops = await getWorkshops()
-  const testimonials = await getTestimonials(true)
-  const settings = await getSystemSettings()
+  const [programs, categories, events, workshops, testimonials, settings] = await Promise.all([
+    getPrograms(),
+    getProgramCategories(),
+    getEvents(),
+    getWorkshops(),
+    getTestimonials(true),
+    getSystemSettings()
+  ])
 
   const fallbackTestimonials = [
     {

@@ -28,10 +28,66 @@ export default async function DashboardPage() {
     redirect("/login")
   }
 
-  // Fetch current user and check permissions
-  const currentUser = await prisma.user.findUnique({
-    where: { id: session.user?.id }
-  })
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const sevenDaysAgo = new Date()
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
+  sevenDaysAgo.setHours(0, 0, 0, 0)
+
+  // Fetch all dashboard metrics and user details in parallel
+  const [
+    currentUser,
+    clientCount,
+    todayTransactions,
+    activeEnrollments,
+    recentEnrollments,
+    lowStockItems,
+    testimonialsCount,
+    activeTestimonialsCount,
+    recentTransactions
+  ] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user?.id }
+    }),
+    prisma.client.count(),
+    prisma.transaction.aggregate({
+      where: { 
+        createdAt: { gte: today },
+        type: "REVENUE"
+      },
+      _sum: { amount: true }
+    }),
+    prisma.enrollment.count({
+      where: { status: "CONFIRMED" }
+    }),
+    prisma.enrollment.findMany({
+      take: 5,
+      orderBy: { createdAt: "desc" },
+      include: {
+        client: true,
+        program: true,
+        workshop: true,
+        event: true,
+      }
+    }),
+    prisma.inventoryItem.findMany({
+      where: { quantity: { lte: 5 } },
+      take: 5,
+      orderBy: { quantity: "asc" }
+    }),
+    prisma.testimonial.count(),
+    prisma.testimonial.count({
+      where: { isActive: true }
+    }),
+    prisma.transaction.findMany({
+      where: {
+        createdAt: { gte: sevenDaysAgo },
+        type: "REVENUE"
+      },
+      select: { amount: true, createdAt: true }
+    })
+  ])
 
   const canViewReports = checkUserPermission(currentUser, PERMISSIONS.VIEW_REPORTS)
   const canAddClient = checkUserPermission(currentUser, PERMISSIONS.ADD_CLIENT)
@@ -39,63 +95,7 @@ export default async function DashboardPage() {
   const canSellPos = checkUserPermission(currentUser, [PERMISSIONS.SELL_POS, PERMISSIONS.RETURN_ORDER, PERMISSIONS.MANAGE_INVENTORY, PERMISSIONS.OPEN_CLOSE_SHIFT])
   const canEditTestimonials = checkUserPermission(currentUser, [PERMISSIONS.EDIT_CLIENT, PERMISSIONS.MANAGE_USERS])
 
-  // Fetch real stats
-  const clientCount = await prisma.client.count()
-  
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  
-  const todayTransactions = await prisma.transaction.aggregate({
-    where: { 
-      createdAt: { gte: today },
-      type: "REVENUE"
-    },
-    _sum: { amount: true }
-  })
-  
   const todayRevenue = todayTransactions._sum.amount || 0
-
-  const activeEnrollments = await prisma.enrollment.count({
-    where: { status: "CONFIRMED" }
-  })
-
-  // Fetch 5 most recent enrollments
-  const recentEnrollments = await prisma.enrollment.findMany({
-    take: 5,
-    orderBy: { createdAt: "desc" },
-    include: {
-      client: true,
-      program: true,
-      workshop: true,
-      event: true,
-    }
-  })
-
-  // Fetch 5 items with low stock (quantity <= 5)
-  const lowStockItems = await prisma.inventoryItem.findMany({
-    where: { quantity: { lte: 5 } },
-    take: 5,
-    orderBy: { quantity: "asc" }
-  })
-
-  // Fetch testimonials count
-  const testimonialsCount = await prisma.testimonial.count()
-  const activeTestimonialsCount = await prisma.testimonial.count({
-    where: { isActive: true }
-  })
-
-  // Fetch real chart data for the last 7 days
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
-  sevenDaysAgo.setHours(0, 0, 0, 0)
-
-  const recentTransactions = await prisma.transaction.findMany({
-    where: {
-      createdAt: { gte: sevenDaysAgo },
-      type: "REVENUE"
-    },
-    select: { amount: true, createdAt: true }
-  })
 
   // Group by day of week
   const daysMap = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
