@@ -66,6 +66,7 @@ export async function getPrograms() {
 }
 
 export type ProgramOptionData = {
+  id?: string
   name: string
   price: number
   sessionsPerMonth: number
@@ -121,17 +122,53 @@ export async function updateProgram(id: string, data: {
     }
   })
 
-  // Delete existing options completely and recreate them
-  // (Cascade will handle deleting old schedules automatically)
-  await prisma.programOption.deleteMany({
+  // Get existing options in database
+  const existingOptions = await prisma.programOption.findMany({
     where: { programId: id }
   })
 
-  await prisma.program.update({
-    where: { id },
-    data: {
-      options: {
-        create: data.options.map(opt => ({
+  // Options we want to keep
+  const incomingOptionIds = data.options.map(opt => opt.id).filter(Boolean) as string[]
+
+  // Options to delete
+  const optionsToDelete = existingOptions.filter(opt => !incomingOptionIds.includes(opt.id))
+
+  // Check if any option to delete has enrollments
+  for (const optToDelete of optionsToDelete) {
+    const enrollmentsCount = await prisma.enrollment.count({
+      where: { optionId: optToDelete.id }
+    })
+    if (enrollmentsCount > 0) {
+      throw new Error(`لا يمكن حذف خيار الاشتراك "${optToDelete.name}" لوجود اشتراكات مسجلة به. يمكنك تعديل خيار الاشتراك أو تركه دون حذفه.`)
+    }
+    // Delete the option and its schedules
+    await prisma.programOption.delete({
+      where: { id: optToDelete.id }
+    })
+  }
+
+  // Update or Create incoming options
+  for (const opt of data.options) {
+    if (opt.id) {
+      // Update existing option
+      await prisma.programOption.update({
+        where: { id: opt.id },
+        data: {
+          name: opt.name,
+          price: opt.price,
+          sessionsPerMonth: opt.sessionsPerMonth,
+          capacity: opt.capacity,
+          schedules: {
+            deleteMany: {}, // Delete old schedules
+            create: opt.schedules // Create new schedules
+          }
+        }
+      })
+    } else {
+      // Create new option
+      await prisma.programOption.create({
+        data: {
+          programId: id,
           name: opt.name,
           price: opt.price,
           sessionsPerMonth: opt.sessionsPerMonth,
@@ -139,10 +176,10 @@ export async function updateProgram(id: string, data: {
           schedules: {
             create: opt.schedules
           }
-        }))
-      }
+        }
+      })
     }
-  })
+  }
 
   await logAction("UPDATE_PROGRAM", { programId: id, name: data.name })
   revalidatePath('/dashboard/programs')

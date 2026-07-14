@@ -7,7 +7,7 @@ import { useConfirm } from "@/components/ConfirmProvider"
 import { toast } from "sonner"
 
 type ScheduleData = { dayOfWeek: number, startTime: string, endTime: string }
-type OptionData = { name: string, price: string, sessionsPerMonth: string, capacity: string, schedules: ScheduleData[] }
+type OptionData = { id?: string, name: string, price: string, sessionsPerMonth: string, capacity: string, schedules: ScheduleData[] }
 
 export default function ProgramsManager({ initialPrograms, initialCategories }: any) {
   const [programs, setPrograms] = useState<any[]>(initialPrograms)
@@ -142,6 +142,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
       name: prog.name,
       description: prog.description || "",
       options: prog.options.map((opt: any) => ({
+        id: opt.id,
         name: opt.name,
         price: opt.price.toString(),
         sessionsPerMonth: opt.sessionsPerMonth.toString(),
@@ -181,6 +182,7 @@ export default function ProgramsManager({ initialPrograms, initialCategories }: 
       name: programForm.name,
       description: programForm.description,
       options: programForm.options.map(opt => ({
+        id: opt.id || undefined,
         name: opt.name,
         price: parseFloat(opt.price),
         sessionsPerMonth: parseInt(opt.sessionsPerMonth),

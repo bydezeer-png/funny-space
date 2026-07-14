@@ -110,12 +110,6 @@ export default function ClientLoginPage() {
               />
               <Lock size={18} className="absolute left-4 top-4.5 text-foreground/30" />
             </div>
-            
-            {/* Helpful Hint Badge */}
-            <div className="text-xs text-primary font-bold mt-4 text-center bg-pink-50/40 p-3 rounded-2xl border border-border/40 flex items-center justify-center gap-1.5">
-              <Heart size={12} className="animate-pulse text-primary shrink-0" />
-              <span>تلميح: كلمة المرور الافتراضية لحسابكِ هي رقم هاتفكِ</span>
-            </div>
           </div>
 
           <button

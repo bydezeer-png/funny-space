@@ -344,10 +344,6 @@ export async function addShiftExpense(shiftId: string, amount: number, descripti
     prisma.shiftExpense.create({
       data: { amount, description, shiftId }
     }),
-    prisma.pOSShift.update({
-      where: { id: shiftId },
-      data: { expectedCash: { decrement: amount } }
-    }),
     prisma.transaction.create({
       data: {
         type: "EXPENSE",

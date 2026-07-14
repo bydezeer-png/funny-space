@@ -1,8 +1,28 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/auth"
+import { checkUserPermission, PERMISSIONS } from "@/lib/permissions"
 
 export async function POST(req: Request) {
   try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: "غير مصرح - الرجاء تسجيل الدخول" }, { status: 401 })
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id }
+    })
+
+    if (!currentUser || !currentUser.isActive) {
+      return NextResponse.json({ error: "الحساب معطل أو غير موجود" }, { status: 403 })
+    }
+
+    const hasPermission = checkUserPermission(currentUser, PERMISSIONS.RECORD_ATTENDANCE)
+    if (!hasPermission) {
+      return NextResponse.json({ error: "عفواً، لا تملك صلاحية تسجيل حضور المشتركات" }, { status: 403 })
+    }
+
     const { clientId } = await req.json()
 
     if (!clientId) {

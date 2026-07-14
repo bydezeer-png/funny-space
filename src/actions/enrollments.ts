@@ -115,6 +115,21 @@ export async function recordAttendance(enrollmentId: string, isMakeup: boolean =
   if (!enrollment) throw new Error("الاشتراك غير موجود")
   if (enrollment.status !== "CONFIRMED") throw new Error("يجب تأكيد الدفع أولاً")
 
+  // Prevent duplicate attendance on the same calendar day
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+  const todayEnd = new Date()
+  todayEnd.setHours(23, 59, 59, 999)
+
+  const existingAttendanceToday = enrollment.attendances.find(a => {
+    const d = new Date(a.date)
+    return d >= todayStart && d <= todayEnd && a.isMakeup === isMakeup
+  })
+
+  if (existingAttendanceToday) {
+    throw new Error(`تم تسجيل حضور ${isMakeup ? 'تعويضي' : 'أساسي'} لهذه المشتركة بالفعل اليوم`)
+  }
+
   // If it's a program, validate max sessions and payment-based access
   if (enrollment.program) {
     const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length

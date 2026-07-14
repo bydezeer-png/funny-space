@@ -17,6 +17,10 @@ export async function verifyPermission(requiredPermission?: PermissionValue) {
     where: { id: session.user.id }
   })
   
+  if (!currentUser || !currentUser.isActive) {
+    throw new Error("عفواً، هذا الحساب معطل أو غير موجود في النظام")
+  }
+  
   if ((currentUser?.role as string) === "ADMIN") return currentUser; // Admins can do anything
   
   if (requiredPermission && !currentUser?.permissions.includes(requiredPermission)) {

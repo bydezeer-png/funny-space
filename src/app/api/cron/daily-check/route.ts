@@ -45,7 +45,8 @@ export async function GET(request: Request) {
           isExpired = true
         }
         // OR if all sessions are consumed
-        if (enrollment.attendances.length >= enrollment.option.sessionsPerMonth) {
+        const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length
+        if (regularAttendances >= enrollment.option.sessionsPerMonth) {
           isExpired = true
         }
       }

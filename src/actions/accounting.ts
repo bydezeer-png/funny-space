@@ -55,14 +55,19 @@ export async function getAccountingSummary() {
     take: 50
   })
 
-  let totalRevenue = 0
-  let totalExpenses = 0
+  const [revenueAgg, expenseAgg] = await Promise.all([
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { type: "REVENUE" }
+    }),
+    prisma.transaction.aggregate({
+      _sum: { amount: true },
+      where: { type: "EXPENSE" }
+    })
+  ])
 
-  const allTx = await prisma.transaction.findMany()
-  allTx.forEach((tx: any) => {
-    if (tx.type === "REVENUE") totalRevenue += tx.amount
-    else totalExpenses += tx.amount
-  })
+  const totalRevenue = revenueAgg._sum.amount || 0
+  const totalExpenses = expenseAgg._sum.amount || 0
 
   return { transactions, expenses, totalRevenue, totalExpenses, netIncome: totalRevenue - totalExpenses }
 }
