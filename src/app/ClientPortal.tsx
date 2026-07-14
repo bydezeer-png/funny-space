@@ -586,7 +586,7 @@ export default function ClientPortal({ programs, categories, events, workshops, 
       {/* Booking Dialog Modal (Glassmorphic Backdrop) */}
       {bookingItem && (
         <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-2xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white border border-pink-100/80 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 relative">
+          <div className="bg-white border border-pink-100/80 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-300 relative">
             
             {successMsg ? (
               /* Success screen layout */
