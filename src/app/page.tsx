@@ -1,6 +1,7 @@
 import { getPrograms, getProgramCategories } from "@/actions/programs"
 import { getEvents, getWorkshops } from "@/actions/events"
 import { getTestimonials } from "@/actions/testimonials"
+import { getSystemSettings } from "@/actions/settings"
 import ClientPortal from "./ClientPortal"
 import Link from "next/link"
 import { 
@@ -38,6 +39,7 @@ export default async function Home() {
   const events = await getEvents()
   const workshops = await getWorkshops()
   const testimonials = await getTestimonials(true)
+  const settings = await getSystemSettings()
 
   const fallbackTestimonials = [
     {
@@ -537,6 +539,7 @@ export default async function Home() {
               categories={categories} 
               events={events} 
               workshops={workshops} 
+              settings={settings}
             />
           </div>
         </div>
