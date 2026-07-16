@@ -418,7 +418,7 @@ export default function ClientPortal({ programs, categories, events, workshops, 
 
       {/* 2. WORKSHOPS SECTION (MASTERCLASS TICKETS) */}
       {hasWorkshops && (
-        <div className="space-y-16">
+        <div id="events" className="space-y-16">
           
           {/* Section Header */}
           <div className="flex flex-col items-center text-center space-y-4">

@@ -124,11 +124,10 @@ export default async function Home() {
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center gap-5 lg:gap-7 text-xs font-semibold uppercase tracking-wider text-white/90">
               <a href="#about" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">About Us</a>
-              <a href="#about" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Our Team</a>
-              <a href="#services" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Programs</a>
-              <a href="#services" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Pricing</a>
-              <a href="#services" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Events</a>
-              <a href="#contact" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Blog</a>
+              <a href="#services" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Classes</a>
+              <a href="#events" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Events</a>
+              <a href="#contact" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Contact</a>
+              <a href="/client-login" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Members</a>
             </nav>
 
             {/* CTA Button */}
@@ -166,19 +165,16 @@ export default async function Home() {
                   <a href="#about" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">About Us</a>
                 </label>
                 <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  <a href="#about" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Our Team</a>
+                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Classes</a>
                 </label>
                 <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Programs</a>
+                  <a href="#events" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Events</a>
                 </label>
                 <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Pricing</a>
+                  <a href="#contact" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Contact</a>
                 </label>
                 <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  <a href="#services" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Events</a>
-                </label>
-                <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  <a href="#contact" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Blog</a>
+                  <a href="/client-login" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Members Login</a>
                 </label>
               </nav>
             </div>
@@ -659,11 +655,10 @@ export default async function Home() {
             <h4 className="font-bold text-xs uppercase tracking-wider text-slate-400 mb-3">Quick Links</h4>
             <ul className="space-y-2 font-semibold text-slate-600 text-sm">
               <li><a href="#about" className="hover:text-[#D13F7A] transition-all">About Us</a></li>
-              <li><a href="#services" className="hover:text-[#D13F7A] transition-all">Programs</a></li>
-              <li><a href="#services" className="hover:text-[#D13F7A] transition-all">Pricing</a></li>
-              <li><a href="#services" className="hover:text-[#D13F7A] transition-all">Events</a></li>
-              <li><a href="#contact" className="hover:text-[#D13F7A] transition-all">Blog</a></li>
+              <li><a href="#services" className="hover:text-[#D13F7A] transition-all">Classes</a></li>
+              <li><a href="#events" className="hover:text-[#D13F7A] transition-all">Events</a></li>
               <li><a href="#contact" className="hover:text-[#D13F7A] transition-all">Contact Us</a></li>
+              <li><a href="/client-login" className="hover:text-[#D13F7A] transition-all">Members Login</a></li>
             </ul>
           </div>
           
