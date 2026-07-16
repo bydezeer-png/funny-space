@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { verifyPermission } from "./users"
+import { PERMISSIONS } from "@/lib/permissions"
 
 export async function getTestimonials(onlyActive: boolean = false) {
   try {
@@ -23,6 +25,7 @@ export async function createTestimonial(data: {
   isActive?: boolean
 }) {
   try {
+    await verifyPermission(PERMISSIONS.EDIT_CLIENT)
     const testimonial = await prisma.testimonial.create({
       data: {
         name: data.name,
@@ -52,6 +55,7 @@ export async function updateTestimonial(
   }
 ) {
   try {
+    await verifyPermission(PERMISSIONS.EDIT_CLIENT)
     const testimonial = await prisma.testimonial.update({
       where: { id },
       data,
@@ -67,6 +71,7 @@ export async function updateTestimonial(
 
 export async function toggleTestimonialActive(id: string, isActive: boolean) {
   try {
+    await verifyPermission(PERMISSIONS.EDIT_CLIENT)
     const testimonial = await prisma.testimonial.update({
       where: { id },
       data: { isActive },
@@ -82,6 +87,7 @@ export async function toggleTestimonialActive(id: string, isActive: boolean) {
 
 export async function deleteTestimonial(id: string) {
   try {
+    await verifyPermission(PERMISSIONS.EDIT_CLIENT)
     await prisma.testimonial.delete({
       where: { id },
     })

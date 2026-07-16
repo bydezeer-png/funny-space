@@ -27,6 +27,13 @@ export default async function DashboardLayout({
     where: { id: session.user?.id }
   });
 
+  if (!currentUser || !currentUser.isActive) {
+    if ((session.user as any)?.role === "CLIENT") {
+      redirect("/client-portal");
+    }
+    redirect("/login");
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-background" dir="rtl">
       <GlobalSearch />
@@ -42,7 +49,7 @@ export default async function DashboardLayout({
         <div className="p-6 flex items-center justify-between border-b border-border/50 w-full">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 overflow-hidden rounded-xl border border-border bg-card p-1 shadow-sm shrink-0">
-              <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
+              <img src="/logo.png" alt="Soly's Space" className="w-full h-full object-contain" />
             </div>
             <div className="text-right">
               <h1 className="text-sm font-black tracking-tight text-foreground leading-none font-display">Soly's Space</h1>

@@ -57,14 +57,14 @@ export default function ClientLoginPage() {
         
         {/* Floating Brand Logo */}
         <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-md shadow-pink-200/10">
-          <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
+          <img src="/logo.png" alt="Soly's Space" className="w-full h-full object-contain" />
         </div>
 
         {/* Title */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-2">تسجيل دخول العضوات</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground mb-2">تسجيل دخول المشتركات</h1>
           <p className="text-foreground/50 font-bold text-xs sm:text-sm">
-            مرحباً بكِ مجدداً في مساحتكِ الخاصة بـ Soly's Space ✨
+            مرحباً بكِ مجدداً في مساحتكِ الخاصة ✨
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export default function ClientLoginPage() {
         </form>
 
         {/* Back Link */}
-        <div className="mt-8 text-center pt-6 border-t border-pink-50">
+        <div className="mt-8 text-center pt-6 border-t border-pink-50 flex flex-col gap-3">
           <Link href="/" className="text-xs sm:text-sm font-black text-foreground/40 hover:text-primary transition-all flex items-center justify-center gap-2 group">
             العودة للموقع الرئيسي <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </Link>

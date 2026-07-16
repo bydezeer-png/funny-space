@@ -121,12 +121,14 @@ enum EnrollmentStatus {
   PENDING
   CONFIRMED
   CANCELLED
+  EXPIRED
+  COMPLETED
 }
 
 model Enrollment {
   id          String   @id @default(cuid())
   clientId    String
-  client      Client   @relation(fields: [clientId], references: [id])
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   
   programId   String?
   program     Program? @relation(fields: [programId], references: [id])
@@ -188,7 +190,7 @@ model POSOrder {
   paymentMethod String   @default("CASH") // "CASH", "CARD", "WALLET"
   
   clientId      String?
-  client        Client?  @relation(fields: [clientId], references: [id])
+  client        Client?  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   
   isReturned    Boolean  @default(false)
   discount      Float    @default(0)
@@ -267,11 +269,30 @@ model Testimonial {
 }
 
 model SystemSettings {
-  id             String   @id @default("default")
-  whatsappNumber String?
-  address        String?
-  mapLink        String?
-  paymentMethods String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                     String   @id @default("default")
+  spaceName              String   @default("Soly's Space")
+  spaceDescription       String?  @default("مساحتك الخاصة للبنات فقط للترفيه والتعلم والدراسة في بيئة مريحة وآمنة ✨")
+  whatsappNumber         String?
+  address                String?
+  mapLink                String?
+  paymentMethods         String?
+  membershipDurationDays Int      @default(30)
+  preventDoubleCheckIn   Boolean  @default(true)
+  enablePublicBookings   Boolean  @default(true)
+  instagramLink          String?  @default("https://instagram.com")
+  tiktokLink             String?  @default("https://tiktok.com")
+  maxFailedAttempts      Int      @default(5)
+  lockoutDurationMinutes Int      @default(15)
+  showTestimonials       Boolean  @default(true)
+  topAlertBanner         String?  @default("🎉 Welcome to Soly's Space! Use code FIRST10 for 10% off your first booking!")
+  showTopAlertBanner     Boolean  @default(true)
+  heroTitle              String   @default("Welcome to Soly's Space ✨")
+  heroSubtitle           String   @default("A safe, fun and empowering space for girls to explore their passions, build confidence and create unforgettable memories.")
+  showHeroSection        Boolean  @default(true)
+  showClassesSection     Boolean  @default(true)
+  showPerksSection       Boolean  @default(true)
+  showBookingSection     Boolean  @default(true)
+  adminLoginSecret       String   @default("soly-admin")
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }

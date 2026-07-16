@@ -2,17 +2,34 @@ import { signIn } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import Link from "next/link"
 
 export default async function LoginPage(props: {
-  searchParams: Promise<{ error?: string; minutes?: string }>
+  searchParams: Promise<{ error?: string; minutes?: string; secret?: string }>
 }) {
   const searchParams = await props.searchParams
   const error = searchParams?.error
   const minutes = searchParams?.minutes
+  const secret = searchParams?.secret
+
+  // Gate: only allow access if the secret matches the stored admin login secret
+  const settings = await prisma.systemSettings.findUnique({ where: { id: "default" } })
+  const adminSecret = settings?.adminLoginSecret || "soly-admin"
+  if (secret !== adminSecret) {
+    redirect("/")
+  }
 
   const handleLogin = async (formData: FormData) => {
     "use server"
     const email = formData.get("email") as string
+
+    // Fetch settings for lockout policy and admin secret
+    const sett = await prisma.systemSettings.findUnique({
+      where: { id: "default" }
+    })
+    const maxFailedAttempts = sett?.maxFailedAttempts ?? 5
+    const lockoutDurationMinutes = sett?.lockoutDurationMinutes ?? 15
+    const loginSecret = sett?.adminLoginSecret || "soly-admin"
 
     // Precheck for account lockout
     const user = await prisma.user.findUnique({
@@ -22,7 +39,7 @@ export default async function LoginPage(props: {
     if (user && user.lockoutUntil && user.lockoutUntil > new Date()) {
       const timeLeftMs = user.lockoutUntil.getTime() - Date.now()
       const minutesLeft = Math.ceil(timeLeftMs / (60 * 1000))
-      return redirect(`/login?error=LockedOut&minutes=${minutesLeft}`)
+      return redirect(`/login?secret=${loginSecret}&error=LockedOut&minutes=${minutesLeft}`)
     }
 
     try {
@@ -34,10 +51,10 @@ export default async function LoginPage(props: {
         const updatedUser = await prisma.user.findUnique({
           where: { email }
         })
-        if (updatedUser && updatedUser.failedAttempts >= 5) {
-          return redirect("/login?error=LockedOut&minutes=15")
+        if (updatedUser && updatedUser.failedAttempts >= maxFailedAttempts) {
+          return redirect(`/login?secret=${loginSecret}&error=LockedOut&minutes=${lockoutDurationMinutes}`)
         }
-        return redirect("/login?error=CredentialsSignin")
+        return redirect(`/login?secret=${loginSecret}&error=CredentialsSignin`)
       }
       throw error
     }
@@ -52,7 +69,7 @@ export default async function LoginPage(props: {
       <div className="max-w-md w-full bg-card rounded-[2.5rem] shadow-2xl border border-border/50 p-8 sm:p-10 relative z-10 animate-in zoom-in-95 duration-500">
         {/* Floating Brand Logo */}
         <div className="w-20 h-20 mx-auto mb-6 overflow-hidden rounded-2xl border border-border bg-card p-1.5 shadow-md shadow-pink-200/10">
-          <img src="/logo.png" alt="Soly's Space Logo" className="w-full h-full object-contain" />
+          <img src="/logo.png" alt="Soly's Space" className="w-full h-full object-contain" />
         </div>
 
         <div className="text-center mb-8">
@@ -106,6 +123,16 @@ export default async function LoginPage(props: {
             دخول للنظام
           </button>
         </form>
+
+        {/* Swapper navigation link */}
+        <div className="mt-6 text-center pt-6 border-t border-pink-50 flex flex-col gap-3">
+          <Link href="/client-login" className="text-xs sm:text-sm font-black text-primary hover:underline transition-all flex items-center justify-center gap-2">
+            🔑 تسجيل دخول المشتركات
+          </Link>
+          <Link href="/" className="text-xs sm:text-sm font-black text-foreground/40 hover:text-primary transition-all flex items-center justify-center gap-2 group">
+            العودة للموقع الرئيسي ←
+          </Link>
+        </div>
       </div>
     </div>
   )

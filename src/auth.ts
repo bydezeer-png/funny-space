@@ -54,8 +54,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const updates: { failedAttempts: number; lockoutUntil?: Date | null } = {
           failedAttempts: newAttempts
         }
-        if (newAttempts >= 5) {
-          updates.lockoutUntil = new Date(Date.now() + 15 * 60 * 1000) // Lock for 15 mins
+        
+        const settings = await prisma.systemSettings.findUnique({
+          where: { id: "default" }
+        })
+        const maxFailedAttempts = settings?.maxFailedAttempts ?? 5
+        const lockoutDurationMinutes = settings?.lockoutDurationMinutes ?? 15
+
+        if (newAttempts >= maxFailedAttempts) {
+          updates.lockoutUntil = new Date(Date.now() + lockoutDurationMinutes * 60 * 1000)
         }
         await prisma.user.update({
           where: { id: user.id },

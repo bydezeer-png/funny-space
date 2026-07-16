@@ -73,11 +73,18 @@ export default async function Home() {
   return (
     <div dir="ltr" className="min-h-screen bg-transparent text-[#1A1A1A] relative selection:bg-hot-pink/20 selection:text-hot-pink font-sans overflow-x-hidden">
       
+      {/* Dynamic Announcement Banner */}
+      {settings.showTopAlertBanner && settings.topAlertBanner && (
+        <div className="bg-[#FFF5F8] border-b border-pink-100/50 py-2.5 px-4 text-center text-xs font-bold text-[#D13F7A] tracking-wide relative z-50">
+          {settings.topAlertBanner}
+        </div>
+      )}
+
       {/* Soft Decorative Grid Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#ebdff9_1.2px,transparent_1.2px)] [background-size:48px_48px] opacity-15 pointer-events-none -z-20"></div>
       
       {/* Hero Section: Full-Width Immersive Banner containing integrated Glassmorphism Header */}
-      <section className="w-full pt-0 pb-0 relative min-h-[680px] md:min-h-[580px] lg:min-h-[640px] overflow-hidden flex flex-col justify-between">
+      <section className={`w-full pt-0 pb-0 relative overflow-hidden flex flex-col justify-between ${settings.showHeroSection ? 'min-h-[680px] md:min-h-[580px] lg:min-h-[640px]' : 'min-h-auto pb-12'}`}>
         
         {/* Background Image (Full-Width) */}
         <img 
@@ -188,35 +195,36 @@ export default async function Home() {
           <label htmlFor="mobile-menu-toggle" className="fixed inset-0 bg-black/40 z-40 hidden peer-checked:block md:peer-checked:hidden"></label>
 
           {/* Content Overlaid on Right (RTL displays on the right side) */}
-          <div className="w-full md:w-3/5 flex flex-col justify-center items-start text-left text-white space-y-5 z-20 my-auto pt-6 md:pt-8">
-            
-            {/* Girls' Community Badge */}
-            <span className="text-[10px] sm:text-xs font-extrabold tracking-wider text-[#D13F7A] uppercase flex items-center gap-1.5">
-              <span className="hidden md:inline">✦ {"Girls' Community"} ✦</span>
-              <span className="md:hidden">{"Girls' Community"}</span>
-              <Users size={12} className="text-[#D13F7A] md:hidden" />
-            </span>
+          {settings.showHeroSection && (
+            <div className="w-full md:w-3/5 flex flex-col justify-center items-start text-left text-white space-y-5 z-20 my-auto pt-6 md:pt-8">
+              
+              {/* Girls' Community Badge */}
+              <span className="text-[10px] sm:text-xs font-extrabold tracking-wider text-[#D13F7A] uppercase flex items-center gap-1.5">
+                <span className="hidden md:inline">✦ {"Girls' Community"} ✦</span>
+                <span className="md:hidden">{"Girls' Community"}</span>
+                <Users size={12} className="text-[#D13F7A] md:hidden" />
+              </span>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5.5xl font-normal leading-[1.25] font-display text-white tracking-tight max-w-2xl">
-              A Place Where Girls <br className="hidden sm:inline" />
-              <span className="text-[#D13F7A] font-black italic">Grow, Create & Shine ✨</span>
-            </h2>
-            
-            <p className="text-xs sm:text-sm text-white/90 font-medium max-w-md leading-relaxed">
-              A safe, fun and empowering space for girls to explore their passions, build confidence and create unforgettable memories.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-3.5 w-full sm:w-auto pt-2">
-              <a href="#services" className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-[#D13F7A] hover:bg-[#B13064] hover:scale-[1.02] hover:shadow-[0_6px_15px_rgba(209,63,122,0.25)] active:scale-98 text-white font-bold text-xs uppercase tracking-widest transition-all gap-1.5 shadow-sm group">
-                <span>Join The Community</span>
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </a>
-              <a href="#services" className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-2xl border border-white/30 hover:border-white/70 hover:bg-white/5 hover:scale-[1.02] active:scale-98 text-white font-bold text-xs uppercase tracking-widest transition-all gap-1.5 shadow-sm group">
-                <span>Explore Programs</span>
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </a>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-5.5xl font-normal leading-[1.25] font-display text-white tracking-tight max-w-2xl">
+                {settings.heroTitle || `Welcome to ${settings.spaceName} ✨`}
+              </h2>
+              
+              <p className="text-xs sm:text-sm text-white/90 font-medium max-w-md leading-relaxed">
+                {settings.heroSubtitle || settings.spaceDescription || "A safe, fun and empowering space for girls to explore their passions, build confidence and create unforgettable memories."}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3.5 w-full sm:w-auto pt-2">
+                <a href="#services" className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-2xl bg-[#D13F7A] hover:bg-[#B13064] hover:scale-[1.02] hover:shadow-[0_6px_15px_rgba(209,63,122,0.25)] active:scale-98 text-white font-bold text-xs uppercase tracking-widest transition-all gap-1.5 shadow-sm group">
+                  <span>Join The Community</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+                <a href="#services" className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 rounded-2xl border border-white/30 hover:border-white/70 hover:bg-white/5 hover:scale-[1.02] active:scale-98 text-white font-bold text-xs uppercase tracking-widest transition-all gap-1.5 shadow-sm group">
+                  <span>Explore Programs</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </a>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Bottom Translucent Benefits Card */}
           <div className="w-full bg-black/45 backdrop-blur-md border border-white/10 rounded-2xl md:rounded-full px-4 py-3 md:px-8 md:py-3.5 z-20 mt-6 grid grid-cols-2 md:grid-cols-4 md:flex md:flex-row md:items-center md:justify-between md:gap-0 md:divide-x md:divide-white/15 text-white">
@@ -330,7 +338,7 @@ export default async function Home() {
             {/* Right Column: Portrait Image with Overlay Pill (swapped order to order-2 in LTR to put image on the right) */}
             <div className="w-full aspect-[4/4.5] rounded-[2.5rem] overflow-hidden shadow-2xs border border-pink-100/40 relative order-2 lg:order-2">
               <img 
-                src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop" 
+                src="/cozy_safe_zone.png" 
                 alt="Cozy Studio Inside" 
                 className="w-full h-full object-cover"
               />
@@ -348,7 +356,8 @@ export default async function Home() {
       </section>
 
       {/* Class Offerings Section */}
-      <section className="pt-10 pb-14 md:pt-12 md:pb-16 bg-white">
+      {settings.showClassesSection && (
+        <section className="pt-10 pb-14 md:pt-12 md:pb-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           
           {/* Centered Headings */}
@@ -444,9 +453,11 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Booking Steps Banner Section (Mockup Steps Layout) */}
-      <section className="pt-8 pb-12 md:pt-10 md:pb-14 bg-white">
+      {settings.showClassesSection && (
+        <section className="pt-8 pb-12 md:pt-10 md:pb-14 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           
           {/* Centered Headings */}
@@ -519,9 +530,11 @@ export default async function Home() {
 
         </div>
       </section>
+      )}
 
       {/* Main Booking Portal (ClientPortal) */}
-      <section id="services" className="py-12 md:py-16 relative z-10 bg-[#FFF5F8] border-y border-pink-100/30">
+      {settings.showBookingSection && (
+        <section id="services" className="py-12 md:py-16 relative z-10 bg-[#FFF5F8] border-y border-pink-100/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Main Booking Header */}
@@ -546,9 +559,11 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Portal Promotion Section (Bottom Promotion Box) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+      {settings.showPerksSection && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
         <div className="relative w-full bg-gradient-to-r from-[#FFF0F4] via-[#FDF2F8] to-white rounded-[3rem] p-8 md:p-12 border border-pink-100/30 overflow-hidden shadow-2xs flex flex-col lg:flex-row items-center justify-between gap-12">
           
           {/* Left Column (swapped order to order-1 in LTR to put text on the left) */}
@@ -643,73 +658,67 @@ export default async function Home() {
 
         </div>
       </section>
+      )}
 
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-16 md:py-20 bg-white border-t border-pink-100/30">
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
-          
-          <div className="text-center space-y-3">
-            <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest text-[#D13F7A] uppercase bg-pink-50 border border-pink-100/50 px-3.5 py-1.5 rounded-full">
-              💬 Our Cozy Family
-            </span>
-            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-normal font-display text-[#1A1A1A] uppercase tracking-widest text-center">
-              WHAT THEY SAY
-            </h3>
-            <p className="text-[10px] uppercase tracking-widest text-[#D13F7A] font-black text-center">
-              {"Love notes and stories from our lovely girls' community in Alexandria"}
-            </p>
-          </div>
+      {settings.showTestimonials && testimonials.length > 0 && (
+        <section id="testimonials" className="py-16 md:py-20 bg-white border-t border-pink-100/30">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 space-y-16">
+            
+            <div className="text-center space-y-3">
+              <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest text-[#D13F7A] uppercase bg-pink-50 border border-pink-100/50 px-3.5 py-1.5 rounded-full">
+                💬 Our Cozy Family
+              </span>
+              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-normal font-display text-[#1A1A1A] uppercase tracking-widest text-center">
+                WHAT THEY SAY
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-[#D13F7A] font-black text-center">
+                {"Love notes and stories from our lovely girls' community in Alexandria"}
+              </p>
+            </div>
 
-          {/* Testimonial Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {(testimonials.length > 0 ? testimonials : fallbackTestimonials).map((t) => {
-              const finalAvatar = (t as any).avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=150";
-
-              return (
-                <div
-                  key={t.id}
-                  className="bg-[#FFFDFE] border border-pink-100/50 rounded-[2rem] p-8 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow text-left"
-                >
-                  <div>
-                    {/* 5 gold stars */}
-                    <div className="flex gap-0.5 text-yellow-400 mb-5 justify-start">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-sm">★</span>
-                      ))}
+            {/* Testimonial Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {testimonials.map((t) => {
+                return (
+                  <div
+                    key={t.id}
+                    className="bg-[#FFFDFE] border border-pink-100/50 rounded-[2rem] p-8 shadow-xs flex flex-col justify-between hover:shadow-sm transition-shadow text-left"
+                  >
+                    <div>
+                      {/* 5 gold stars */}
+                      <div className="flex gap-0.5 text-yellow-400 mb-5 justify-start">
+                        {[...Array(5)].map((_, i) => (
+                          <span key={i} className="text-sm">★</span>
+                        ))}
+                      </div>
+                      {/* Content */}
+                      <div className="text-foreground/75 font-semibold text-xs sm:text-sm leading-relaxed mb-8">
+                        "{t.content}"
+                      </div>
                     </div>
-                    {/* Content */}
-                    <div className="text-foreground/75 font-semibold text-xs sm:text-sm leading-relaxed mb-8">
-                      "{t.content}"
-                    </div>
-                  </div>
-                  {/* User Profile */}
-                  <div className="border-t border-pink-50/70 pt-5 flex items-center gap-3 justify-start">
-                    <div className="w-10 h-10 rounded-full overflow-hidden border border-pink-100 shadow-sm shrink-0">
-                      <img 
-                        src={finalAvatar} 
-                        alt={t.name} 
-                        className="w-full h-full object-cover" 
-                      />
-                    </div>
-                    <div className="text-left">
-                      <h5 className="font-bold text-[#1A1A1A] text-xs">{t.name}</h5>
-                      <p className="text-[10px] text-slate-400 font-medium mt-0.5">{t.role}</p>
+                    {/* User Profile */}
+                    <div className="border-t border-pink-50/70 pt-5 flex items-center gap-3 justify-start">
+                      <div className="text-left">
+                        <h5 className="font-bold text-[#1A1A1A] text-xs">{t.name}</h5>
+                        <p className="text-[10px] text-slate-400 font-medium mt-0.5">{t.role}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </div>
 
-          {/* Slider Pagination Dots */}
-          <div className="flex justify-center items-center gap-2 pt-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#D13F7A]"></span>
-            <span className="w-2.5 h-2.5 rounded-full bg-pink-200"></span>
-            <span className="w-2.5 h-2.5 rounded-full bg-pink-200"></span>
-          </div>
+            {/* Slider Pagination Dots */}
+            <div className="flex justify-center items-center gap-2 pt-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#D13F7A]"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-pink-200"></span>
+              <span className="w-2.5 h-2.5 rounded-full bg-pink-200"></span>
+            </div>
 
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
 
       <footer id="contact" className="bg-[#FFF5F8] border-t border-pink-100/50 pt-10 pb-12 md:pt-16 md:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 mb-8 md:mb-12">

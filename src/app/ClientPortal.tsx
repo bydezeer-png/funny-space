@@ -24,6 +24,29 @@ import {
 import { toast } from "sonner"
 
 export default function ClientPortal({ programs, categories, events, workshops, settings }: any) {
+  if (settings && !settings.enablePublicBookings) {
+    return (
+      <div className="bg-amber-50 border border-amber-100 text-amber-800 p-8 rounded-[2rem] text-center font-bold space-y-4 max-w-lg mx-auto" dir="rtl">
+        <div className="text-4xl">🌸</div>
+        <h3 className="text-xl font-black">الحجوزات الإلكترونية مغلقة مؤقتاً</h3>
+        <p className="text-xs text-amber-700/80 leading-relaxed">
+          نعتذر منكِ، الحجوزات العامة مغلقة حالياً لاكتمال الأعداد أو لأعمال الصيانة والتطوير. 
+          برجاء التواصل معنا مباشرة عبر الواتساب للاستفسار عن المواعيد القادمة والتسجيل.
+        </p>
+        {settings.whatsappNumber && (
+          <a
+            href={`https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`مرحباً ${settings.spaceName || "Soly's Space"}، أود الاستفسار عن التسجيل والحجوزات المتاحة حالياً 🎀`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-6 py-3.5 rounded-2xl text-sm font-black shadow-lg shadow-green-200/10 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer mt-2"
+          >
+            تواصل معنا عبر الواتساب 💬
+          </a>
+        )}
+      </div>
+    )
+  }
+
   const [bookingItem, setBookingItem] = useState<{type: string, item: any, option?: any} | null>(null)
   const [clientForm, setClientForm] = useState({ name: "", phone: "", birthDate: "" })
   const [loading, setLoading] = useState(false)
@@ -92,36 +115,77 @@ export default function ClientPortal({ programs, categories, events, workshops, 
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
-  const getCategoryImage = (catName: string, customImage?: string) => {
-    if (customImage && customImage.trim()) return customImage
+  const getCategoryImage = (catName: string, customImage?: string | null) => {
     const nameLower = catName.toLowerCase()
-    if (nameLower.includes("رسم") || nameLower.includes("فنون") || nameLower.includes("فنية") || nameLower.includes("art") || nameLower.includes("paint") || nameLower.includes("creative")) {
+    if (nameLower.includes("belly") || nameLower.includes("رقص")) {
+      return "/belly_dance.png"
+    }
+    if (nameLower.includes("fitness") || nameLower.includes("لياقة") || nameLower.includes("فتنس") || nameLower.includes("رياض")) {
+      return "/fitness.png"
+    }
+    if (nameLower.includes("kick") || nameLower.includes("كيك")) {
+      return "/kickboxing.png"
+    }
+    if (nameLower.includes("skat") || nameLower.includes("تزلج") || nameLower.includes("سكيت") || nameLower.includes("roller")) {
+      return "/skating.png"
+    }
+    if (nameLower.includes("yoga") || nameLower.includes("يوجا")) {
+      return "/yoga.png"
+    }
+    if (customImage && !customImage.includes("unsplash.com") && customImage.trim() !== "") return customImage
+    if (nameLower.includes("رسم") || nameLower.includes("فنون") || nameLower.includes("art") || nameLower.includes("paint")) {
       return "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800"
     }
-    if (nameLower.includes("تزلج") || nameLower.includes("سكيت") || nameLower.includes("skate") || nameLower.includes("roller")) {
-      return "https://images.unsplash.com/photo-1564982751276-897bd4083e07?q=80&w=800"
-    }
-    if (nameLower.includes("رياض") || nameLower.includes("لياقة") || nameLower.includes("فتنس") || nameLower.includes("كيك") || nameLower.includes("fitness") || nameLower.includes("gym") || nameLower.includes("workout") || nameLower.includes("class")) {
-      return "https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=800"
-    }
     if (nameLower.includes("موسيقى") || nameLower.includes("عزف") || nameLower.includes("music")) {
-      return "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=800"
+      return "https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?q=80&w=800"
     }
-    return "https://images.unsplash.com/photo-1518622358385-8ea7d0794bf6?q=80&w=800"
+    return "/cozy_safe_zone.png"
   }
 
   const getCategoryDesc = (catName: string) => {
     const nameLower = catName.toLowerCase()
-    if (nameLower.includes("رسم") || nameLower.includes("فنون") || nameLower.includes("فنية") || nameLower.includes("art") || nameLower.includes("paint") || nameLower.includes("creative")) {
-      return "Unleash your artistic side with sketch, oil paint, and clay sculpture under expert guidance."
+    if (nameLower.includes("belly") || nameLower.includes("رقص")) {
+      return "Express yourself with rhythm, elegance, and high-energy dance routines in a joyful, supportive group."
     }
-    if (nameLower.includes("تزلج") || nameLower.includes("سكيت") || nameLower.includes("skate") || nameLower.includes("roller")) {
+    if (nameLower.includes("kick") || nameLower.includes("كيك")) {
+      return "Build strength, learn self-defense, and release stress with high-intensity boxing and kick workouts."
+    }
+    if (nameLower.includes("skat") || nameLower.includes("تزلج") || nameLower.includes("سكيت") || nameLower.includes("roller")) {
       return "Learn skate basics and artistic routines with safety, confidence, and absolute fun."
     }
-    if (nameLower.includes("رياض") || nameLower.includes("لياقة") || nameLower.includes("فتنس") || nameLower.includes("كيك") || nameLower.includes("fitness") || nameLower.includes("gym") || nameLower.includes("workout") || nameLower.includes("class")) {
+    if (nameLower.includes("yoga") || nameLower.includes("يوجا")) {
+      return "Relax your mind, improve flexibility, and find inner peace with mindful stretching and yoga flows."
+    }
+    if (nameLower.includes("fitness") || nameLower.includes("لياقة") || nameLower.includes("فتنس") || nameLower.includes("رياض")) {
       return "Get active, feel strong, and enjoy high-energy workouts in a cozy, private safe space."
     }
+    if (nameLower.includes("رسم") || nameLower.includes("فنون") || nameLower.includes("art") || nameLower.includes("paint") || nameLower.includes("creative")) {
+      return "Unleash your artistic side with sketch, oil paint, and clay sculpture under expert guidance."
+    }
     return "Specialized programs designed to nurture your passion and build skills step by step."
+  }
+
+  const getProgramDesc = (pName: string, categoryName: string, dbDesc?: string | null) => {
+    if (dbDesc && dbDesc.trim() !== "" && dbDesc !== "Specialized programs designed to nurture your passion and build skills step by step.") {
+      return dbDesc
+    }
+    const catLower = categoryName.toLowerCase()
+    if (catLower.includes("belly") || catLower.includes("رقص")) {
+      return "Express yourself with rhythm, elegance, and high-energy dance routines in a joyful, supportive group."
+    }
+    if (catLower.includes("kick") || catLower.includes("كيك")) {
+      return "Build strength, learn self-defense, and release stress with high-intensity boxing and kick boxing drills."
+    }
+    if (catLower.includes("skat") || catLower.includes("تزلج") || catLower.includes("سكيت") || catLower.includes("roller")) {
+      return "Learn skate basics, balance, and artistic routines with safety, confidence, and absolute fun."
+    }
+    if (catLower.includes("yoga") || catLower.includes("يوجا")) {
+      return "Relax your mind, improve flexibility, and find inner peace with mindful stretching and yoga flows."
+    }
+    if (catLower.includes("fitness") || catLower.includes("لياقة") || catLower.includes("فتنس") || catLower.includes("رياض")) {
+      return "Get active, feel strong, and enjoy high-energy workouts in a cozy, private safe space."
+    }
+    return "Join us in this level designed to elevate your skills in a vibrant, judgment-free zone with certified bestie coaches."
   }
 
   const hasWorkshops = workshops && workshops.length > 0
@@ -134,10 +198,16 @@ export default function ClientPortal({ programs, categories, events, workshops, 
       <div className="space-y-24">
         {selectedCategoryId === null ? (
           <div className="space-y-12">
-            <div className="text-center space-y-4">
-              <span className="text-primary font-black text-xs sm:text-sm bg-pink-50 border border-pink-100/50 px-4 py-1.5 rounded-full shadow-sm">Available Classes</span>
-              <h3 className="text-3xl sm:text-4xl font-black text-[#121212] tracking-tight">Explore Classes & Workshops at Soly's Space ✨</h3>
-              <p className="text-foreground/75 text-xs sm:text-sm font-semibold max-w-xl mx-auto">Pick your favorite category to view the available classes and reserve your spot.</p>
+            <div className="text-center space-y-3 mb-12">
+              <span className="inline-flex items-center gap-1.5 text-xs font-black tracking-widest text-[#D13F7A] uppercase bg-pink-50 border border-pink-100/50 px-3.5 py-1.5 rounded-full">
+                🌸 Available Classes
+              </span>
+              <h3 className="text-3xl sm:text-4xl lg:text-4.5xl font-normal font-display text-[#1A1A1A] uppercase tracking-widest text-center">
+                Explore Classes & Workshops at {settings?.spaceName || "Soly's Space"} ✨
+              </h3>
+              <p className="text-[10px] uppercase tracking-widest text-[#D13F7A] font-black text-center max-w-xl mx-auto leading-relaxed">
+                Pick your favorite category to view the available classes and reserve your spot.
+              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto px-2">
@@ -272,7 +342,7 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                           </div>
 
                           <p className="text-foreground/60 text-xs sm:text-sm leading-relaxed font-semibold">
-                            {p.description || "Join us in this level designed to elevate your skills in a vibrant, judgment-free zone with certified bestie coaches."}
+                            {getProgramDesc(p.name, c.name, p.description)}
                           </p>
 
                           {/* Options List */}
@@ -587,7 +657,6 @@ export default function ClientPortal({ programs, categories, events, workshops, 
       {bookingItem && (
         <div className="fixed inset-0 bg-[#121212]/40 backdrop-blur-2xl z-[100] flex items-center justify-center p-4 animate-in fade-in duration-300">
           <div className="bg-white border border-pink-100/80 w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] animate-in zoom-in-95 duration-300 relative">
-            
             {successMsg ? (
               /* Success screen layout */
               <div className="p-8 sm:p-10 text-center">
@@ -599,16 +668,26 @@ export default function ClientPortal({ programs, categories, events, workshops, 
                 <p className="text-foreground/75 text-sm sm:text-base font-semibold leading-relaxed text-left">
                   {successMsg}
                 </p>
+
+                {settings?.whatsappNumber && (
+                  <a
+                    href={`https://wa.me/${settings.whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi Soly's Space! I just booked: ${bookingItem.item.name}${bookingItem.option ? ` - ${bookingItem.option.name}` : ''}. Name: ${clientForm.name}, Phone: ${clientForm.phone}. Please confirm my booking! ✨`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 mb-2 inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20ba5a] text-white px-6 py-4 rounded-2xl text-base font-black w-full shadow-lg shadow-green-200/20 transition-all hover:scale-[1.01] active:scale-95 cursor-pointer"
+                  >
+                    <span>Message on WhatsApp to Confirm 💬</span>
+                  </a>
+                )}
                 
                 <button 
                   onClick={handleCloseSuccess} 
-                  className="mt-8 bg-[#121212] hover:bg-primary text-white px-6 py-4 rounded-2xl text-base font-black w-full shadow-lg shadow-pink-200/20 transition-all active:scale-95 cursor-pointer"
+                  className="mt-4 bg-[#121212] hover:bg-primary text-white px-6 py-4 rounded-2xl text-base font-black w-full shadow-lg shadow-pink-200/20 transition-all active:scale-95 cursor-pointer"
                 >
                   Yay, got it!
                 </button>
               </div>
             ) : (
-              /* Input form layout */
               <>
                 <div className="bg-pink-50/10 p-6 sm:p-8 border-b border-pink-100/30 relative text-left">
                   <button 

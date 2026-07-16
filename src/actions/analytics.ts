@@ -192,24 +192,44 @@ export async function getPOSAnalytics(from?: Date, to?: Date) {
   const expenses = expensesAgg._sum.amount || 0;
 
   // Best selling items
-  const orderItems = await prisma.pOSOrderItem.findMany({
+  const groupedItems = await prisma.pOSOrderItem.groupBy({
+    by: ['inventoryItemId'],
     where: {
       order: { isReturned: false, ...dateFilter }
     },
-    include: { inventoryItem: true }
+    _sum: {
+      quantity: true
+    },
+    orderBy: {
+      _sum: {
+        quantity: 'desc'
+      }
+    },
+    take: 5
   })
 
-  const itemStats: Record<string, { name: string, quantity: number, revenue: number }> = {};
-  orderItems.forEach(item => {
-    const id = item.inventoryItem.id;
-    if (!itemStats[id]) {
-      itemStats[id] = { name: item.inventoryItem.name, quantity: 0, revenue: 0 };
-    }
-    itemStats[id].quantity += item.quantity;
-    itemStats[id].revenue += (item.quantity * item.sellPrice);
-  });
-
-  const bestSellers = Object.values(itemStats).sort((a, b) => b.quantity - a.quantity).slice(0, 5);
+  const bestSellers = await Promise.all(
+    groupedItems.map(async (group) => {
+      const item = await prisma.inventoryItem.findUnique({
+        where: { id: group.inventoryItemId }
+      })
+      
+      const itemsForProduct = await prisma.pOSOrderItem.findMany({
+        where: {
+          inventoryItemId: group.inventoryItemId,
+          order: { isReturned: false, ...dateFilter }
+        },
+        select: { quantity: true, sellPrice: true }
+      })
+      const revenue = itemsForProduct.reduce((sum, it) => sum + (it.quantity * it.sellPrice), 0)
+      
+      return {
+        name: item?.name || "منتج غير معروف",
+        quantity: group._sum.quantity || 0,
+        revenue
+      }
+    })
+  )
 
   return {
     totalSales: sales,

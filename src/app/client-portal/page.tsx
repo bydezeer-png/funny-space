@@ -86,7 +86,7 @@ export default async function ClientPortalPage() {
               <div className="w-full h-full bg-card rounded-xl flex items-center justify-center font-black text-primary">S</div>
             </div>
             <div>
-              <span className="text-sm font-black text-foreground">بوابة العضوات</span>
+              <span className="text-sm font-black text-foreground">بوابة المشتركات</span>
               <p className="text-[8px] text-primary font-black uppercase tracking-wider">Soly's Space</p>
             </div>
           </div>

@@ -14,6 +14,11 @@ export async function GET(request: Request) {
     
     let expiredCount = 0
 
+    const settings = await prisma.systemSettings.findUnique({
+      where: { id: "default" }
+    })
+    const durationDays = settings?.membershipDurationDays ?? 30
+
     // 1. Process expirations for CONFIRMED enrollments
     const activeEnrollments = await prisma.enrollment.findMany({
       where: { status: "CONFIRMED" },
@@ -39,9 +44,9 @@ export async function GET(request: Request) {
           isExpired = true
         }
       } else if (enrollment.option) {
-        // If program membership expired (more than 30 days old)
+        // If program membership expired
         const daysOld = Math.floor((today.getTime() - enrollment.createdAt.getTime()) / (1000 * 60 * 60 * 24))
-        if (daysOld > 30) {
+        if (daysOld > durationDays) {
           isExpired = true
         }
         // OR if all sessions are consumed
@@ -52,9 +57,20 @@ export async function GET(request: Request) {
       }
 
       if (isExpired) {
+        let finalStatus: "EXPIRED" | "COMPLETED" = "EXPIRED"
+
+        if (enrollment.option) {
+          const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length
+          if (regularAttendances >= enrollment.option.sessionsPerMonth) {
+            finalStatus = "COMPLETED"
+          }
+        } else if (enrollment.workshop || enrollment.event) {
+          finalStatus = "COMPLETED"
+        }
+
         await prisma.enrollment.update({
           where: { id: enrollment.id },
-          data: { status: "CANCELLED" } // Mark as inactive/ended
+          data: { status: finalStatus }
         })
         expiredCount++
       }

@@ -33,16 +33,48 @@ export async function POST(request: Request) {
       clientId: client.id,
       status: "PENDING",
       paymentMethod: paymentMethod || null,
-      totalAmount: totalAmount || 0,
     }
 
+    let calculatedAmount = 0
     if (type === "PROGRAM") {
+      if (!optionId) {
+        return NextResponse.json({ error: "Option ID is required for program booking" }, { status: 400 })
+      }
+      const option = await prisma.programOption.findUnique({
+        where: { id: optionId }
+      })
+      if (!option || option.programId !== itemId) {
+        return NextResponse.json({ error: "Invalid program option selected" }, { status: 400 })
+      }
+      calculatedAmount = option.price
       enrollmentData.programId = itemId
-      if (optionId) enrollmentData.optionId = optionId
+      enrollmentData.optionId = optionId
     }
-    else if (type === "WORKSHOP") enrollmentData.workshopId = itemId
-    else if (type === "EVENT") enrollmentData.eventId = itemId
-    else return NextResponse.json({ error: "Invalid type" }, { status: 400 })
+    else if (type === "WORKSHOP") {
+      const workshop = await prisma.workshop.findUnique({
+        where: { id: itemId }
+      })
+      if (!workshop) {
+        return NextResponse.json({ error: "Invalid workshop selected" }, { status: 400 })
+      }
+      calculatedAmount = workshop.price
+      enrollmentData.workshopId = itemId
+    }
+    else if (type === "EVENT") {
+      const event = await prisma.event.findUnique({
+        where: { id: itemId }
+      })
+      if (!event) {
+        return NextResponse.json({ error: "Invalid event selected" }, { status: 400 })
+      }
+      calculatedAmount = event.price
+      enrollmentData.eventId = itemId
+    }
+    else {
+      return NextResponse.json({ error: "Invalid type" }, { status: 400 })
+    }
+
+    enrollmentData.totalAmount = calculatedAmount
 
     const enrollment = await prisma.enrollment.create({
       data: enrollmentData

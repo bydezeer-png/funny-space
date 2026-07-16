@@ -92,6 +92,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 400 })
     }
 
+    const settings = await prisma.systemSettings.findUnique({
+      where: { id: "default" }
+    })
+    const preventDoubleCheckIn = settings?.preventDoubleCheckIn ?? true
+
+    if (preventDoubleCheckIn) {
+      // Prevent duplicate check-in today for the selected enrollment
+      const todayStart = new Date()
+      todayStart.setHours(0, 0, 0, 0)
+      const todayEnd = new Date()
+      todayEnd.setHours(23, 59, 59, 999)
+
+      const alreadyCheckedIn = activeEnrollment.attendances.some(a => {
+        const d = new Date(a.date)
+        return d >= todayStart && d <= todayEnd
+      })
+
+      if (alreadyCheckedIn) {
+        return NextResponse.json({ error: "تم تسجيل دخول المشتركة لهذا الاشتراك بالفعل اليوم" }, { status: 400 })
+      }
+    }
+
     // Record Attendance
     await prisma.attendance.create({
       data: {
