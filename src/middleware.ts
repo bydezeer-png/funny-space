@@ -14,7 +14,8 @@ export function middleware(request: NextRequest) {
   // Protect Dashboard Routes
   if (pathname.startsWith('/dashboard')) {
     if (!hasSessionToken) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const search = request.nextUrl.search
+      return NextResponse.redirect(new URL(`/login${search}`, request.url))
     }
   }
 

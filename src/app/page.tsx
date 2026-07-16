@@ -3,6 +3,7 @@ import { getEvents, getWorkshops } from "@/actions/events"
 import { getTestimonials } from "@/actions/testimonials"
 import { getSystemSettings } from "@/actions/settings"
 import ClientPortal from "./ClientPortal"
+import ExploreCarousel from "@/components/ExploreCarousel"
 import Link from "next/link"
 import { 
   ArrowLeft, 
@@ -351,6 +352,12 @@ export default async function Home() {
         </div>
       </section>
 
+      <ExploreCarousel 
+        programs={programs} 
+        categories={categories} 
+        events={events} 
+        workshops={workshops} 
+      />
 
       {/* Booking Steps Banner Section (Mockup Steps Layout) */}
       {settings.showClassesSection && (

@@ -24,6 +24,13 @@ import {
 import { toast } from "sonner"
 
 export default function ClientPortal({ programs, categories, events, workshops, settings }: any) {
+  const [bookingItem, setBookingItem] = useState<{type: string, item: any, option?: any} | null>(null)
+  const [clientForm, setClientForm] = useState({ name: "", phone: "", birthDate: "" })
+  const [loading, setLoading] = useState(false)
+  const [successMsg, setSuccessMsg] = useState("")
+  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
+
   if (settings && !settings.enablePublicBookings) {
     return (
       <div className="bg-amber-50 border border-amber-100 text-amber-800 p-8 rounded-[2rem] text-center font-bold space-y-4 max-w-lg mx-auto" dir="rtl">
@@ -47,11 +54,6 @@ export default function ClientPortal({ programs, categories, events, workshops, 
     )
   }
 
-  const [bookingItem, setBookingItem] = useState<{type: string, item: any, option?: any} | null>(null)
-  const [clientForm, setClientForm] = useState({ name: "", phone: "", birthDate: "" })
-  const [loading, setLoading] = useState(false)
-  const [successMsg, setSuccessMsg] = useState("")
-
   const parsedPaymentMethods = (() => {
     if (!settings?.paymentMethods) return []
     try {
@@ -61,8 +63,6 @@ export default function ClientPortal({ programs, categories, events, workshops, 
       return []
     }
   })()
-
-  const [selectedMethodId, setSelectedMethodId] = useState<string | null>(null)
 
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
@@ -113,7 +113,6 @@ export default function ClientPortal({ programs, categories, events, workshops, 
     setSelectedMethodId(null)
   }
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
 
   const getCategoryImage = (catName: string, customImage?: string | null) => {
     const nameLower = catName.toLowerCase()

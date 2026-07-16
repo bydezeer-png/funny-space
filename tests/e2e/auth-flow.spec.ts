@@ -19,7 +19,7 @@ test.describe('Public Landing Page & Route Protection E2E Flow', () => {
 
   test('should redirect unauthenticated users from dashboard to login', async ({ page }) => {
     // Attempt to access dashboard route directly
-    await page.goto('/dashboard');
+    await page.goto('/dashboard?secret=soly-admin');
 
     // Middleware should block this and redirect to login
     await expect(page).toHaveURL(/\/login/);
