@@ -119,6 +119,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         (session.user as any).id = token.id as string
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return url
+      }
+      try {
+        const urlObj = new URL(url)
+        if (urlObj.origin === baseUrl || urlObj.hostname === "localhost" || urlObj.hostname === "127.0.0.1") {
+          return url
+        }
+      } catch {
+        // Ignore
+      }
+      return baseUrl
     }
   },
   pages: {

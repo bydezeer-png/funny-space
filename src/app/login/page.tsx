@@ -1,4 +1,4 @@
-import { signIn } from "@/auth"
+import { signIn, auth } from "@/auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
@@ -11,6 +11,16 @@ export default async function LoginPage(props: {
   const error = searchParams?.error
   const minutes = searchParams?.minutes
   const secret = searchParams?.secret
+
+  // Redirect authenticated users directly to their dashboard/portal
+  const session = await auth()
+  if (session?.user) {
+    if ((session.user as any).role === "CLIENT") {
+      redirect("/client-portal")
+    } else {
+      redirect("/dashboard")
+    }
+  }
 
   // Gate: only allow access if the secret matches the stored admin login secret
   const settings = await prisma.systemSettings.findUnique({ where: { id: "default" } })
