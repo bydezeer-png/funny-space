@@ -140,3 +140,20 @@ export async function deleteClient(id: string) {
   }
 }
 
+export async function searchClientsAction(query: string) {
+  if (!query || query.trim().length < 2) {
+    return []
+  }
+  return await prisma.client.findMany({
+    where: {
+      OR: [
+        { name: { contains: query, mode: 'insensitive' } },
+        { phone: { contains: query } }
+      ]
+    },
+    take: 20,
+    orderBy: { name: 'asc' }
+  })
+}
+
+

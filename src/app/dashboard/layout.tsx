@@ -73,6 +73,12 @@ export default async function DashboardLayout({
               <SidebarNavLink href="/dashboard/reception" icon={<CreditCard size={18}/>}>الاستقبال والحجوزات</SidebarNavLink>
             </label>
           )}
+
+          {checkUserPermission(currentUser, [PERMISSIONS.BOOK_ENROLLMENT, PERMISSIONS.RECORD_ATTENDANCE]) && (
+            <label htmlFor="dashboard-sidebar-toggle" className="block w-full cursor-pointer">
+              <SidebarNavLink href="/dashboard/classes" icon={<Users size={18} className="text-primary"/>}>الكلاسات والاشتراكات</SidebarNavLink>
+            </label>
+          )}
           
           {checkUserPermission(currentUser, [PERMISSIONS.RECORD_ATTENDANCE]) && (
             <label htmlFor="dashboard-sidebar-toggle" className="block w-full cursor-pointer">
