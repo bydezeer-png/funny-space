@@ -8,6 +8,8 @@ import { logAction } from "@/lib/audit"
 import { verifyPermission } from "./users"
 import { PERMISSIONS } from "@/lib/permissions"
 import bcrypt from "bcryptjs"
+import { evaluateEnrollment } from "@/lib/attendance/rules"
+import { cairoDayKey, cairoDayOfWeek } from "@/lib/time"
 
 export async function getEnrollments() {
   return await prisma.enrollment.findMany({
@@ -108,61 +110,63 @@ export async function cancelEnrollment(id: string) {
 
 export async function recordAttendance(enrollmentId: string, isMakeup: boolean = false) {
   await verifyPermission(PERMISSIONS.RECORD_ATTENDANCE)
+  const session = await auth()
+
   const enrollment = await prisma.enrollment.findUnique({
     where: { id: enrollmentId },
-    include: { attendances: true, program: true, option: true, client: true }
+    include: {
+      client: true,
+      program: { include: { category: true } },
+      option: { include: { schedules: true } },
+      workshop: true,
+      event: true,
+      attendances: true
+    }
   })
 
   if (!enrollment) throw new Error("الاشتراك غير موجود")
-  if (enrollment.status !== "CONFIRMED") throw new Error("يجب تأكيد الدفع أولاً")
-
-  // Prevent duplicate attendance on the same calendar day
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
-  const todayEnd = new Date()
-  todayEnd.setHours(23, 59, 59, 999)
-
-  const existingAttendanceToday = enrollment.attendances.find(a => {
-    const d = new Date(a.date)
-    return d >= todayStart && d <= todayEnd && a.isMakeup === isMakeup
+  
+  const settings = await prisma.systemSettings.findUnique({
+    where: { id: "default" }
   })
 
-  if (existingAttendanceToday) {
-    throw new Error(`تم تسجيل حضور ${isMakeup ? 'تعويضي' : 'أساسي'} لهذه المشتركة بالفعل اليوم`)
+  const now = new Date()
+  const state = evaluateEnrollment(enrollment, now, settings)
+  const action = isMakeup ? "CHECK_IN_MAKEUP" : "CHECK_IN"
+
+  if (!state.allowedActions.includes(action)) {
+    const blocker = state.blockers[0]
+    let errorMsg = "عملية الدخول مرفوضة بسبب القواعد المتبعة."
+    if (blocker === "NOT_CONFIRMED") {
+      errorMsg = "يجب تأكيد الدفع أولاً"
+    } else if (blocker === "ALREADY_CHECKED_IN") {
+      errorMsg = `تم تسجيل حضور ${isMakeup ? 'تعويضي' : 'أساسي'} لهذه المشتركة بالفعل اليوم`
+    } else if (blocker === "SESSIONS_EXHAUSTED") {
+      errorMsg = "لقد استنفذ المشترك جميع الحصص الأساسية للمستوى"
+    }
+    throw new Error(errorMsg)
   }
 
-  // If it's a program, validate max sessions and payment-based access
-  if (enrollment.program) {
-    const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length
-    const makeupAttendances = enrollment.attendances.filter(a => a.isMakeup).length
-    
-    const price = enrollment.option ? enrollment.option.price : 0;
-    const maxSessions = enrollment.option ? enrollment.option.sessionsPerMonth : 8;
+  const todayKey = cairoDayKey(now)
+  const todayDayOfWeek = cairoDayOfWeek(now)
 
-    // 1. Partial Payment Logic (Access Control)
-    const sessionPrice = (enrollment.totalAmount || price) / maxSessions;
-    const allowedSessions = Math.floor((enrollment.amountPaid || 0) / sessionPrice);
-
-    if (!isMakeup && regularAttendances >= allowedSessions) {
-      throw new Error(`نفدت الحصص المدفوعة! العميلة دفعت ${enrollment.amountPaid} ج.م ومسموح لها بـ ${allowedSessions} حصص فقط. الرجاء سداد المبلغ المتبقي (${(enrollment.totalAmount || price) - (enrollment.amountPaid || 0)} ج.م) للسماح بالدخول.`);
-    }
-
-    // 2. Max Program Sessions Logic
-    if (!isMakeup && regularAttendances >= maxSessions) {
-      throw new Error(`لقد استنفذ المشترك جميع الحصص الأساسية للمستوى (${maxSessions})`)
-    }
-
-    if (isMakeup && makeupAttendances >= 1) { // 1 makeup per month
-      throw new Error("لا يمكن تعويض أكثر من حصة واحدة")
-    }
-  }
+  // Link scheduleId if it exists today
+  const matchedSchedule = enrollment.option?.schedules?.find(
+    (s: any) => s.dayOfWeek === todayDayOfWeek
+  )
+  const scheduleId = matchedSchedule ? matchedSchedule.id : null
+  const attendanceType = isMakeup ? "MAKEUP" : "REGULAR"
 
   await prisma.attendance.create({
     data: {
       enrollmentId,
-      date: new Date(),
-      status: "ATTENDED",
-      isMakeup
+      date: now,
+      dayKey: todayKey,
+      type: attendanceType,
+      scheduleId,
+      recordedByUserId: session?.user?.id,
+      status: isMakeup ? "MAKEUP" : "ATTENDED",
+      isMakeup: isMakeup
     }
   })
 
@@ -228,6 +232,8 @@ export async function enrollClient(data: {
   totalAmount: number
   amountPaid: number
   remainingSessions?: number
+  startDate?: Date
+  durationDays?: number
 }) {
   await verifyPermission(PERMISSIONS.BOOK_ENROLLMENT)
   const session = await auth()
@@ -261,7 +267,36 @@ export async function enrollClient(data: {
     throw new Error("يجب تحديد عميلة")
   }
 
-  // 2. Create the enrollment
+  // 2. Calculate Start & End Dates
+  const start = data.startDate ? new Date(data.startDate) : new Date()
+  let endDate = null
+  let carriedSessions = 0
+
+  if (data.programId && data.optionId) {
+    const option = await prisma.programOption.findUnique({ where: { id: data.optionId } })
+    const settings = await prisma.systemSettings.findUnique({ where: { id: "default" } })
+    const duration = data.durationDays || option?.durationDays || settings?.membershipDurationDays || 30
+    
+    endDate = new Date(start)
+    endDate.setDate(endDate.getDate() + duration)
+
+    if (option && data.remainingSessions !== undefined) {
+      const maxSessions = option.sessionsPerMonth
+      carriedSessions = Math.max(0, maxSessions - data.remainingSessions)
+    }
+  } else if (data.workshopId) {
+    const workshop = await prisma.workshop.findUnique({ where: { id: data.workshopId } })
+    if (workshop) {
+      endDate = new Date(workshop.endDate)
+    }
+  } else if (data.eventId) {
+    const event = await prisma.event.findUnique({ where: { id: data.eventId } })
+    if (event) {
+      endDate = new Date(event.date)
+    }
+  }
+
+  // 3. Create the enrollment
   const enrollment = await prisma.enrollment.create({
     data: {
       clientId: targetClientId,
@@ -273,6 +308,9 @@ export async function enrollClient(data: {
       paymentMethod: data.paymentMethod || null,
       totalAmount: data.totalAmount,
       amountPaid: data.amountPaid || 0,
+      startDate: start,
+      endDate: endDate,
+      carriedSessions: carriedSessions,
       createdByUserId: session?.user?.id
     },
     include: {
@@ -283,32 +321,6 @@ export async function enrollClient(data: {
       option: true
     }
   })
-
-  // 3. Create dummy attendances if remainingSessions is specified and less than option.sessionsPerMonth
-  if (data.programId && data.optionId && data.remainingSessions !== undefined) {
-    const option = enrollment.option
-    if (option) {
-      const maxSessions = option.sessionsPerMonth
-      const remaining = data.remainingSessions
-      if (remaining < maxSessions) {
-        const dummyCount = maxSessions - remaining
-        const dummyAttendances = []
-        for (let i = 0; i < dummyCount; i++) {
-          dummyAttendances.push({
-            enrollmentId: enrollment.id,
-            date: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000), // historical dates
-            status: "IMPORTED",
-            isMakeup: false
-          })
-        }
-        if (dummyAttendances.length > 0) {
-          await prisma.attendance.createMany({
-            data: dummyAttendances
-          })
-        }
-      }
-    }
-  }
 
   // 4. Create Transaction if CONFIRMED and paid amount > 0
   if (data.status === "CONFIRMED" && data.amountPaid > 0) {
@@ -344,7 +356,6 @@ export async function updateRemainingSessions(enrollmentId: string, newRemaining
     where: { id: enrollmentId },
     include: {
       option: true,
-      attendances: true,
       client: true
     }
   })
@@ -358,42 +369,25 @@ export async function updateRemainingSessions(enrollmentId: string, newRemaining
     throw new Error(`عدد الحصص المتبقية يجب أن يكون بين 0 و ${maxSessions}`)
   }
 
-  const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup && a.status !== "IMPORTED")
-  const importedAttendances = enrollment.attendances.filter(a => a.status === "IMPORTED")
-
-  const targetUsedSessions = maxSessions - newRemainingSessions
-  const requiredImportedCount = targetUsedSessions - regularAttendances.length
-
-  if (requiredImportedCount < 0) {
-    throw new Error(`لا يمكن جعل الحصص المتبقية ${newRemainingSessions} لأن العميلة قامت بحضور ${regularAttendances.length} حصص أساسية بالفعل. الحصص المتبقية الممكنة كحد أقصى هي ${maxSessions - regularAttendances.length}`)
-  }
-
-  // Adjust imported attendances
-  const currentImportedCount = importedAttendances.length
-  
-  if (requiredImportedCount > currentImportedCount) {
-    // Add more imported attendances
-    const toAddCount = requiredImportedCount - currentImportedCount
-    const dummyAttendances = []
-    for (let i = 0; i < toAddCount; i++) {
-      dummyAttendances.push({
-        enrollmentId,
-        date: new Date(Date.now() - (i + 1) * 24 * 60 * 60 * 1000),
-        status: "IMPORTED",
-        isMakeup: false
-      })
+  // Count active regular check-ins
+  const regularCount = await prisma.attendance.count({
+    where: {
+      enrollmentId,
+      type: "REGULAR"
     }
-    await prisma.attendance.createMany({
-      data: dummyAttendances
-    })
-  } else if (requiredImportedCount < currentImportedCount) {
-    // Delete some imported attendances
-    const toDeleteCount = currentImportedCount - requiredImportedCount
-    const toDeleteIds = importedAttendances.slice(0, toDeleteCount).map(a => a.id)
-    await prisma.attendance.deleteMany({
-      where: { id: { in: toDeleteIds } }
-    })
+  })
+
+  const targetCarried = maxSessions - newRemainingSessions - regularCount
+  if (targetCarried < 0) {
+    throw new Error(`لا يمكن جعل الحصص المتبقية ${newRemainingSessions} لأن العميلة قامت بحضور ${regularCount} حصص أساسية بالفعل. الحصص المتبقية الممكنة كحد أقصى هي ${maxSessions - regularCount}`)
   }
+
+  await prisma.enrollment.update({
+    where: { id: enrollmentId },
+    data: {
+      carriedSessions: targetCarried
+    }
+  })
 
   await logAction("UPDATE_REMAINING_SESSIONS", { enrollmentId, clientName: enrollment.client.name, newRemainingSessions })
 

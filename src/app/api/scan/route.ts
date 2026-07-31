@@ -2,7 +2,13 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/auth"
 import { checkUserPermission, PERMISSIONS } from "@/lib/permissions"
+import { evaluateEnrollment, pickRecommended } from "@/lib/attendance/rules"
+import { cairoDayKey, cairoDayOfWeek } from "@/lib/time"
 
+/**
+ * Legacy API Shim for compatibility.
+ * Resolves the client and confirms check-in for the recommended active subscription.
+ */
 export async function POST(req: Request) {
   try {
     const session = await auth()
@@ -29,23 +35,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "لم يتم التعرف على المدخلات" }, { status: 400 })
     }
 
-    // Find client by ID (QR Code) OR Phone Number (Manual Entry)
+    // Find client
     const client = await prisma.client.findFirst({
       where: {
         OR: [
-          { id: clientId },
-          { phone: clientId }
+          { qrToken: clientId },
+          { phone: clientId },
+          { id: clientId }
         ]
       },
       include: {
         enrollments: {
           where: { status: "CONFIRMED" },
-          include: { 
-            program: true,
-            option: true,
+          include: {
+            program: { include: { category: true } },
+            option: { include: { schedules: true } },
             workshop: true,
             event: true,
-            attendances: true 
+            attendances: { orderBy: { date: 'desc' } }
           },
           orderBy: { createdAt: 'desc' }
         }
@@ -60,92 +67,95 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "العميلة لا تمتلك أي اشتراكات مؤكدة" }, { status: 400 })
     }
 
-    // Try to find an enrollment that allows attendance
-    let activeEnrollment = null;
-    let errorMessage = "استنفدت جميع الحصص المتاحة";
-    let isMakeup = false;
-
-    for (const enrollment of client.enrollments) {
-      if (enrollment.program) {
-        const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length;
-        const sessionsPerMonth = enrollment.option?.sessionsPerMonth || 8;
-        const optionPrice = enrollment.option?.price || 0;
-        const sessionPrice = (enrollment.totalAmount || optionPrice) / sessionsPerMonth;
-        const allowedSessions = Math.floor((enrollment.amountPaid || 0) / sessionPrice);
-
-        if (regularAttendances < allowedSessions && regularAttendances < sessionsPerMonth) {
-          activeEnrollment = enrollment;
-          break;
-        } else if (regularAttendances >= allowedSessions && regularAttendances < sessionsPerMonth) {
-          errorMessage = `نفدت الحصص المدفوعة! العميلة دفعت ${enrollment.amountPaid} ومسموح بـ ${allowedSessions} حصص. متبقي ${(enrollment.totalAmount || optionPrice) - (enrollment.amountPaid || 0)} ج.م`;
-        }
-      } else {
-        // For workshops or events, if attended already, skip, else use it
-        if (enrollment.attendances.length === 0) {
-          activeEnrollment = enrollment;
-          break;
-        }
-      }
-    }
-
-    if (!activeEnrollment) {
-      return NextResponse.json({ error: errorMessage }, { status: 400 })
-    }
-
     const settings = await prisma.systemSettings.findUnique({
       where: { id: "default" }
     })
-    const preventDoubleCheckIn = settings?.preventDoubleCheckIn ?? true
 
-    if (preventDoubleCheckIn) {
-      // Prevent duplicate check-in today for the selected enrollment
-      const todayStart = new Date()
-      todayStart.setHours(0, 0, 0, 0)
-      const todayEnd = new Date()
-      todayEnd.setHours(23, 59, 59, 999)
+    // Evaluate states
+    const now = new Date()
+    const todayKey = cairoDayKey(now)
+    const todayDayOfWeek = cairoDayOfWeek(now)
 
-      const alreadyCheckedIn = activeEnrollment.attendances.some(a => {
-        const d = new Date(a.date)
-        return d >= todayStart && d <= todayEnd
-      })
+    const states = client.enrollments.map((e) => evaluateEnrollment(e, now, settings))
+    const recommendedState = pickRecommended(states)
 
-      if (alreadyCheckedIn) {
-        return NextResponse.json({ error: "تم تسجيل دخول المشتركة لهذا الاشتراك بالفعل اليوم" }, { status: 400 })
-      }
+    if (!recommendedState) {
+      return NextResponse.json({ error: "لا يوجد اشتراك متاح لتسجيل الحضور" }, { status: 400 })
     }
 
-    // Record Attendance
+    // Pick action based on allowed actions
+    let action: "CHECK_IN" | "CHECK_IN_MAKEUP" | "CHECK_IN_OFF_SCHEDULE" | null = null
+    if (recommendedState.allowedActions.includes("CHECK_IN")) {
+      action = "CHECK_IN"
+    } else if (recommendedState.allowedActions.includes("CHECK_IN_MAKEUP")) {
+      action = "CHECK_IN_MAKEUP"
+    } else if (recommendedState.allowedActions.includes("CHECK_IN_OFF_SCHEDULE")) {
+      action = "CHECK_IN_OFF_SCHEDULE"
+    }
+
+    if (!action) {
+      // Return the first blocker error message
+      const blocker = recommendedState.blockers[0]
+      let errorMsg = "اشتراك العضوة غير فعال حالياً"
+      if (blocker === "EXPIRED") errorMsg = "انتهت صلاحية الاشتراك"
+      if (blocker === "SESSIONS_EXHAUSTED") errorMsg = "استنفدت جميع الحصص المتاحة"
+      if (blocker === "PAYMENT_LIMIT") errorMsg = "نفدت الحصص المدفوعة! يرجى سداد المبلغ المتبقي."
+      if (blocker === "ALREADY_CHECKED_IN") errorMsg = "تم تسجيل حضور المشتركة لهذا الاشتراك بالفعل اليوم"
+      return NextResponse.json({ error: errorMsg }, { status: 400 })
+    }
+
+    // Process check-in
+    const enrollmentId = recommendedState.enrollmentId
+    const attendanceType = action === "CHECK_IN_MAKEUP" ? "MAKEUP" : action === "CHECK_IN_OFF_SCHEDULE" ? "OFF_SCHEDULE" : "REGULAR"
+
+    const enrollment = client.enrollments.find(e => e.id === enrollmentId)
+    const matchedSchedule = enrollment?.option?.schedules.find(
+      (s: any) => s.dayOfWeek === todayDayOfWeek
+    )
+    const scheduleId = matchedSchedule ? matchedSchedule.id : null
+
+    // Record attendance
     await prisma.attendance.create({
       data: {
-        enrollmentId: activeEnrollment.id,
-        date: new Date(),
-        status: "ATTENDED",
-        isMakeup
+        enrollmentId,
+        date: now,
+        dayKey: todayKey,
+        type: attendanceType,
+        scheduleId,
+        recordedByUserId: currentUser.id,
+        status: attendanceType === "MAKEUP" ? "MAKEUP" : "ATTENDED",
+        isMakeup: attendanceType === "MAKEUP"
       }
     })
 
-    // Calculate remaining for response
-    let remaining = 0;
-    let itemName = activeEnrollment.program?.name || activeEnrollment.workshop?.name || activeEnrollment.event?.name;
-    
-    if (activeEnrollment.program) {
-      const regularAttendances = activeEnrollment.attendances.filter(a => !a.isMakeup).length + 1; // +1 for current
-      const sessionsPerMonth = activeEnrollment.option?.sessionsPerMonth || 8;
-      const optionPrice = activeEnrollment.option?.price || 0;
-      const sessionPrice = (activeEnrollment.totalAmount || optionPrice) / sessionsPerMonth;
-      const allowedSessions = Math.floor((activeEnrollment.amountPaid || 0) / sessionPrice);
-      remaining = Math.max(0, Math.min(sessionsPerMonth, allowedSessions) - regularAttendances);
-    }
+    // Calculate remaining sessions for legacy response
+    const freshState = evaluateEnrollment(
+      await prisma.enrollment.findUnique({
+        where: { id: enrollmentId },
+        include: {
+          client: true,
+          program: { include: { category: true } },
+          option: { include: { schedules: true } },
+          workshop: true,
+          event: true,
+          attendances: { orderBy: { date: 'desc' } }
+        }
+      }),
+      now,
+      settings
+    )
+
+    const itemName = enrollment?.program?.name || enrollment?.workshop?.name || enrollment?.event?.name || "اشتراك"
 
     return NextResponse.json({
       success: true,
       name: client.name,
-      remaining,
+      remaining: freshState.sessions.remaining,
       itemName
     })
 
   } catch (error: any) {
-    console.error(error)
+    console.error("Legacy Scan Shim Error: ", error)
     return NextResponse.json({ error: "حدث خطأ داخلي في الخادم" }, { status: 500 })
   }
 }

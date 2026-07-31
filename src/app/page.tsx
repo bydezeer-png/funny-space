@@ -5,7 +5,9 @@ import { getSystemSettings } from "@/actions/settings"
 import ClientPortal from "./ClientPortal"
 import ExploreCarousel from "@/components/ExploreCarousel"
 import Link from "next/link"
-import { auth } from "@/auth"
+import AuthLink from "@/components/AuthLink"
+
+export const revalidate = 3600; // Cache and revalidate page every hour
 import { 
   ArrowLeft, 
   MapPin, 
@@ -36,14 +38,13 @@ import {
 } from "lucide-react"
 
 export default async function Home() {
-  const [programs, categories, events, workshops, testimonials, settings, session] = await Promise.all([
+  const [programs, categories, events, workshops, testimonials, settings] = await Promise.all([
     getPrograms(),
     getProgramCategories(),
     getEvents(),
     getWorkshops(),
     getTestimonials(true),
-    getSystemSettings(),
-    auth()
+    getSystemSettings()
   ])
 
   const fallbackTestimonials = [
@@ -130,15 +131,7 @@ export default async function Home() {
               <a href="#services" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Classes</a>
               <a href="#events" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Events</a>
               <a href="#contact" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Contact</a>
-              {session?.user ? (
-                (session.user as any).role === "CLIENT" ? (
-                  <Link href="/client-portal" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">My Space</Link>
-                ) : (
-                  <Link href="/dashboard" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Dashboard</Link>
-                )
-              ) : (
-                <Link href="/client-login" className="hover:text-white relative py-1 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-white after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100">Members</Link>
-              )}
+              <AuthLink />
             </nav>
 
             {/* CTA Button */}
@@ -185,15 +178,7 @@ export default async function Home() {
                   <a href="#contact" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Contact</a>
                 </label>
                 <label htmlFor="mobile-menu-toggle" className="block w-full cursor-pointer">
-                  {session?.user ? (
-                    (session.user as any).role === "CLIENT" ? (
-                      <Link href="/client-portal" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">My Space</Link>
-                    ) : (
-                      <Link href="/dashboard" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Dashboard</Link>
-                    )
-                  ) : (
-                    <Link href="/client-login" className="block py-2 border-b border-pink-50/50 text-slate-700 hover:text-primary transition-colors">Members Login</Link>
-                  )}
+                  <AuthLink mobile={true} />
                 </label>
               </nav>
             </div>

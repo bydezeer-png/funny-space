@@ -13,70 +13,85 @@ export async function GET(request: Request) {
     today.setHours(0, 0, 0, 0)
     
     let expiredCount = 0
+    let completedCount = 0
 
-    const settings = await prisma.systemSettings.findUnique({
-      where: { id: "default" }
-    })
-    const durationDays = settings?.membershipDurationDays ?? 30
-
-    // 1. Process expirations for CONFIRMED enrollments
-    const activeEnrollments = await prisma.enrollment.findMany({
-      where: { status: "CONFIRMED" },
-      include: {
-        option: true,
-        workshop: true,
-        event: true,
-        attendances: true
+    // 1. Process program membership expirations (bulk updates by endDate)
+    const expiredResult = await prisma.enrollment.updateMany({
+      where: {
+        status: "CONFIRMED",
+        endDate: { lt: today },
+        programId: { not: null }
+      },
+      data: {
+        status: "EXPIRED"
       }
     })
+    expiredCount += expiredResult.count
 
-    for (const enrollment of activeEnrollments) {
-      let isExpired = false
-
-      if (enrollment.workshop) {
-        // If workshop ended
-        if (enrollment.workshop.endDate < today) {
-          isExpired = true
-        }
-      } else if (enrollment.event) {
-        // If event date passed
-        if (enrollment.event.date < today) {
-          isExpired = true
-        }
-      } else if (enrollment.option) {
-        // If program membership expired
-        const daysOld = Math.floor((today.getTime() - enrollment.createdAt.getTime()) / (1000 * 60 * 60 * 24))
-        if (daysOld > durationDays) {
-          isExpired = true
-        }
-        // OR if all sessions are consumed
-        const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length
-        if (regularAttendances >= enrollment.option.sessionsPerMonth) {
-          isExpired = true
-        }
+    // 2. Process workshop and event expirations (mark as COMPLETED bulk update)
+    const completedWorkshopsEvents = await prisma.enrollment.updateMany({
+      where: {
+        status: "CONFIRMED",
+        OR: [
+          { workshop: { endDate: { lt: today } } },
+          { event: { date: { lt: today } } }
+        ]
+      },
+      data: {
+        status: "COMPLETED"
       }
+    })
+    completedCount += completedWorkshopsEvents.count
 
-      if (isExpired) {
-        let finalStatus: "EXPIRED" | "COMPLETED" = "EXPIRED"
-
-        if (enrollment.option) {
-          const regularAttendances = enrollment.attendances.filter(a => !a.isMakeup).length
-          if (regularAttendances >= enrollment.option.sessionsPerMonth) {
-            finalStatus = "COMPLETED"
+    // 3. Process completed program sessions (clients who consumed all sessions)
+    const confirmedPrograms = await prisma.enrollment.findMany({
+      where: {
+        status: "CONFIRMED",
+        programId: { not: null }
+      },
+      select: {
+        id: true,
+        carriedSessions: true,
+        option: {
+          select: {
+            sessionsPerMonth: true
           }
-        } else if (enrollment.workshop || enrollment.event) {
-          finalStatus = "COMPLETED"
+        },
+        _count: {
+          select: {
+            attendances: {
+              where: {
+                type: "REGULAR"
+              }
+            }
+          }
         }
+      }
+    })
 
-        await prisma.enrollment.update({
-          where: { id: enrollment.id },
-          data: { status: finalStatus }
-        })
-        expiredCount++
+    const completedProgramIds: string[] = []
+    for (const p of confirmedPrograms) {
+      if (p.option) {
+        const totalUsed = (p.carriedSessions || 0) + p._count.attendances
+        if (totalUsed >= p.option.sessionsPerMonth) {
+          completedProgramIds.push(p.id)
+        }
       }
     }
 
-    // 2. Fetch daily financial summary
+    if (completedProgramIds.length > 0) {
+      const completedProgramsResult = await prisma.enrollment.updateMany({
+        where: {
+          id: { in: completedProgramIds }
+        },
+        data: {
+          status: "COMPLETED"
+        }
+      })
+      completedCount += completedProgramsResult.count
+    }
+
+    // 4. Fetch daily financial summary
     const todayRevenueAgg = await prisma.transaction.aggregate({
       where: {
         createdAt: { gte: today },
@@ -96,7 +111,7 @@ export async function GET(request: Request) {
     const todayExpenses = todayExpenseAgg._sum.amount || 0
     const netIncome = todayRevenue - todayExpenses
 
-    // 3. Log daily summary inside audit logs under the first admin user
+    // 5. Log daily summary inside audit logs under the first admin user
     const adminUser = await prisma.user.findFirst({
       where: { role: "ADMIN" }
     })
@@ -106,7 +121,8 @@ export async function GET(request: Request) {
       todayRevenue,
       todayExpenses,
       netIncome,
-      expiredEnrollmentsCount: expiredCount
+      expiredEnrollmentsCount: expiredCount,
+      completedEnrollmentsCount: completedCount
     }
 
     if (adminUser) {
@@ -121,7 +137,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Daily cron tasks executed successfully.",
+      message: "Daily cron tasks executed successfully in bulk.",
       data: summaryDetails
     })
 

@@ -81,6 +81,26 @@ export default function ClassesManager({
   const [isOldClient, setIsOldClient] = useState(false)
   const [remainingSessions, setRemainingSessions] = useState<string>("")
 
+  // Subscription start date and duration
+  const [startDate, setStartDate] = useState<string>(() => {
+    const d = new Date()
+    return d.toISOString().split("T")[0]
+  })
+  const [durationDays, setDurationDays] = useState<string>("30")
+
+  const expectedEndDate = React.useMemo(() => {
+    if (!startDate || !durationDays) return ""
+    try {
+      const d = new Date(startDate)
+      const dur = parseInt(durationDays)
+      if (isNaN(dur) || dur < 0) return ""
+      d.setDate(d.getDate() + dur)
+      return d.toLocaleDateString("ar-EG", { year: "numeric", month: "long", day: "numeric" })
+    } catch {
+      return ""
+    }
+  }, [startDate, durationDays])
+
   // Search existing clients debounced
   useEffect(() => {
     if (clientSearchQuery.trim().length >= 2) {
@@ -110,12 +130,14 @@ export default function ClassesManager({
         setTotalAmount(prog.options[0].price.toString())
         setAmountPaid(prog.options[0].price.toString())
         setRemainingSessions(prog.options[0].sessionsPerMonth.toString())
+        setDurationDays((prog.options[0].durationDays || 30).toString())
       }
     } else {
       setSelectedOptionId("")
       setTotalAmount("")
       setAmountPaid("")
       setRemainingSessions("")
+      setDurationDays("30")
     }
   }, [selectedProgramId, programs])
 
@@ -128,6 +150,7 @@ export default function ClassesManager({
         setTotalAmount(opt.price.toString())
         setAmountPaid(opt.price.toString())
         setRemainingSessions(opt.sessionsPerMonth.toString())
+        setDurationDays((opt.durationDays || 30).toString())
       }
     }
   }, [selectedOptionId, selectedProgramId, programs])
@@ -234,7 +257,9 @@ export default function ClassesManager({
           paymentMethod: paidVal > 0 ? paymentMethod : undefined,
           totalAmount: priceVal,
           amountPaid: paidVal,
-          remainingSessions: dummySessions
+          remainingSessions: dummySessions,
+          startDate: enrollType === "program" ? new Date(startDate) : undefined,
+          durationDays: enrollType === "program" ? parseInt(durationDays) : undefined
         })
         
         toast.success("تم تسجيل العميلة بنجاح!")
@@ -922,6 +947,41 @@ export default function ClassesManager({
                 </div>
               )}
 
+              {/* Subscription Lifecycle (Dates & Duration) */}
+              {enrollType === "program" && selectedOptionId && (
+                <div className="p-4 bg-secondary/20 border border-border rounded-2xl space-y-3">
+                  <p className="text-xs font-black text-foreground/70 flex items-center gap-1">📅 مدة وصلاحية الاشتراك</p>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-black text-foreground/50">تاريخ بداية الاشتراك *</label>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full bg-card border border-border rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:border-primary transition-all text-right"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="block text-[10px] font-black text-foreground/50">صلاحية الاشتراك بالأيام *</label>
+                      <input
+                        type="number"
+                        min="1"
+                        value={durationDays}
+                        onChange={(e) => setDurationDays(e.target.value)}
+                        className="w-full bg-card border border-border rounded-xl px-3 py-2 text-xs font-semibold outline-none focus:border-primary transition-all text-right"
+                      />
+                    </div>
+                  </div>
+
+                  {expectedEndDate && (
+                    <p className="text-[10px] font-bold text-primary">
+                      تاريخ الانتهاء المتوقع: {expectedEndDate}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Special old client toggles (ONLY for Program option) */}
               {enrollType === "program" && selectedOptionId && (
                 <div className="p-4 bg-pink-50/5 border border-border rounded-2xl space-y-3">
@@ -932,7 +992,7 @@ export default function ClassesManager({
                       onChange={(e) => setIsOldClient(e.target.checked)}
                       className="rounded border-border text-primary focus:ring-primary w-4 h-4 cursor-pointer"
                     />
-                    <span>عميلة قديمة؟ (حفظ الحصص المتبقية لها يدوياً)</span>
+                    <span>عميلة قديمة؟ (تحديد الحصص المتبقية لها)</span>
                   </label>
                   
                   {isOldClient && (
@@ -945,7 +1005,7 @@ export default function ClassesManager({
                         onChange={(e) => setRemainingSessions(e.target.value)}
                         className="w-40 bg-card border border-border rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-primary transition-all text-right"
                       />
-                      <p className="text-[9px] text-foreground/45 font-semibold">سيتم استقطاع الحصص المستهلكة من إجمالي الاشتراك تلقائياً.</p>
+                      <p className="text-[9px] text-foreground/45 font-semibold">سيتم حساب وتخزين الحصص المستهلكة سابقاً تلقائياً.</p>
                     </div>
                   )}
                 </div>

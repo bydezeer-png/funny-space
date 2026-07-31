@@ -7,6 +7,9 @@ import bcrypt from "bcryptjs"
 import { logAction } from "@/lib/audit"
 import { verifyPermission } from "./users"
 import { PERMISSIONS } from "@/lib/permissions"
+import { evaluateEnrollment } from "@/lib/attendance/rules"
+import { renderQrDataUrl } from "@/lib/qr"
+import { cairoDayKey } from "@/lib/time"
 
 export async function createClient(formData: FormData) {
   await verifyPermission(PERMISSIONS.ADD_CLIENT)
@@ -52,15 +55,123 @@ export async function getClients(limit = 100) {
 }
 
 export async function getClientById(id: string) {
-  return await prisma.client.findUnique({
+  const client = await prisma.client.findUnique({
     where: { id },
     include: {
       enrollments: {
-        include: { program: true, workshop: true, event: true, attendances: true },
+        include: {
+          program: { include: { category: true } },
+          option: { include: { schedules: true } },
+          workshop: true,
+          event: true,
+          attendances: { orderBy: { date: 'desc' } }
+        },
+        orderBy: { createdAt: 'desc' }
+      },
+      posOrders: {
         orderBy: { createdAt: 'desc' }
       }
     }
   })
+
+  if (!client) return null
+
+  const settings = await prisma.systemSettings.findUnique({
+    where: { id: "default" }
+  })
+
+  // Evaluate scanState for each enrollment
+  const now = new Date()
+  const scanStates = client.enrollments.map(e => evaluateEnrollment(e, now, settings))
+
+  // Compute LTV
+  const enrollmentPaidSum = client.enrollments.reduce((sum, e) => sum + (e.amountPaid || 0), 0)
+  const posPaidSum = client.posOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0)
+  const lifetimeValue = enrollmentPaidSum + posPaidSum
+
+  // Compute Outstanding Balance
+  const outstandingBalance = client.enrollments.reduce((sum, e) => {
+    if (e.status === "CANCELLED") return sum
+    const due = (e.totalAmount || 0) - (e.amountPaid || 0)
+    return sum + Math.max(0, due)
+  }, 0)
+
+  // Compute active subscriptions count
+  const activeSubscriptions = client.enrollments.filter(e => e.status === "CONFIRMED" && !scanStates.find(s => s.enrollmentId === e.id)?.blockers.includes("EXPIRED")).length
+
+  // Compute total sessions attended
+  const totalSessionsAttended = client.enrollments.reduce((sum, e) => {
+    return sum + e.attendances.filter((a: any) => a.type !== "IMPORTED").length
+  }, 0)
+
+  // Find last visit
+  let lastVisitDate: Date | null = null
+  client.enrollments.forEach(e => {
+    e.attendances.forEach((a: any) => {
+      if (a.type !== "IMPORTED" && (!lastVisitDate || a.date > lastVisitDate)) {
+        lastVisitDate = a.date
+      }
+    })
+  })
+  const lastVisit = lastVisitDate ? cairoDayKey(lastVisitDate) : null
+
+  // Risk Flag
+  let riskFlag: "OK" | "AT_RISK" | "CHURNED" = "OK"
+  if (lastVisitDate) {
+    const diffDays = Math.ceil((now.getTime() - lastVisitDate.getTime()) / (1000 * 60 * 60 * 24))
+    if (diffDays > 30) {
+      riskFlag = "CHURNED"
+    } else if (diffDays > 14) {
+      riskFlag = "AT_RISK"
+    }
+  }
+
+  // Generate QR code Data URL
+  let qrSvgDataUrl = ""
+  try {
+    qrSvgDataUrl = await renderQrDataUrl(client.qrToken)
+  } catch (err) {
+    console.error(err)
+  }
+
+  // Formulate attendance timeline
+  const timeline: any[] = []
+  client.enrollments.forEach(e => {
+    const itemName = e.program?.name || e.workshop?.name || e.event?.name || "اشتراك"
+    e.attendances.forEach((a: any) => {
+      if (a.type !== "IMPORTED") {
+        let typeText = "حضور أساسي"
+        if (a.type === "MAKEUP") typeText = "حضور تعويضي"
+        if (a.type === "OFF_SCHEDULE") typeText = "حضور استثنائي"
+
+        timeline.push({
+          id: a.id,
+          date: a.date,
+          dayKey: a.dayKey,
+          type: a.type,
+          typeText,
+          itemName,
+          note: a.note
+        })
+      }
+    })
+  })
+  timeline.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+  return {
+    ...client,
+    kpis: {
+      activeSubscriptions,
+      totalSessionsAttended,
+      lifetimeValue,
+      outstandingBalance,
+      lastVisit,
+      riskFlag
+    },
+    scanStates,
+    timeline,
+    qrSvgDataUrl
+  }
 }
 
 export async function updateClient(

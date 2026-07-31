@@ -19,6 +19,12 @@ jest.mock('@/lib/prisma', () => ({
     attendance: {
       create: jest.fn(),
     },
+    systemSettings: {
+      findUnique: jest.fn().mockResolvedValue({
+        scanAlwaysAskProgram: false,
+        membershipDurationDays: 30
+      }),
+    },
   },
 }))
 

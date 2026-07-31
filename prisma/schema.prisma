@@ -47,12 +47,16 @@ model Client {
   password       String?
   email          String?
   notes          String?
+  qrToken        String         @unique @default(cuid())
+  qrIssuedAt     DateTime       @default(now())
+  isActive       Boolean        @default(true)
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   enrollments    Enrollment[]
   posOrders      POSOrder[]
 
   @@index([phone])
+  @@index([qrToken])
 }
 
 // --- SERVICES & PROGRAMS ---
@@ -82,6 +86,9 @@ model ProgramOption {
   price            Float
   sessionsPerMonth Int               @default(8)
   capacity         Int               @default(15)
+  durationDays     Int               @default(30)
+  makeupAllowance  Int               @default(1)
+  graceDays        Int               @default(0)
   schedules        ProgramSchedule[]
   enrollments      Enrollment[]
 }
@@ -93,6 +100,7 @@ model ProgramSchedule {
   dayOfWeek   Int      // 0=Sunday, 1=Monday...
   startTime   String   // "17:00"
   endTime     String   // "19:00"
+  attendances Attendance[]
 }
 
 model Workshop {
@@ -125,48 +133,75 @@ enum EnrollmentStatus {
   COMPLETED
 }
 
+enum AttendanceType {
+  REGULAR
+  MAKEUP
+  OFF_SCHEDULE
+  IMPORTED
+}
+
 model Enrollment {
-  id          String   @id @default(cuid())
-  clientId    String
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  id              String           @id @default(cuid())
+  clientId        String
+  client          Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
   
-  programId   String?
-  program     Program? @relation(fields: [programId], references: [id])
+  programId       String?
+  program         Program?         @relation(fields: [programId], references: [id])
   
-  optionId    String?
-  option      ProgramOption? @relation(fields: [optionId], references: [id])
+  optionId        String?
+  option          ProgramOption?   @relation(fields: [optionId], references: [id])
   
-  workshopId  String?
-  workshop    Workshop? @relation(fields: [workshopId], references: [id])
+  workshopId      String?
+  workshop        Workshop?        @relation(fields: [workshopId], references: [id])
   
-  eventId     String?
-  event       Event?    @relation(fields: [eventId], references: [id])
+  eventId         String?
+  event           Event?           @relation(fields: [eventId], references: [id])
   
-  status      EnrollmentStatus @default(PENDING)
-  paymentMethod String? // CASH, POS
-  totalAmount Float    @default(0) // Total price of the program at the time of booking
-  amountPaid  Float?
+  status          EnrollmentStatus @default(PENDING)
+  paymentMethod   String? // CASH, POS
+  totalAmount     Float            @default(0) // Total price of the program at the time of booking
+  amountPaid      Float?
+  startDate       DateTime         @default(now())
+  endDate         DateTime?
+  carriedSessions Int              @default(0)
+  frozenDays      Int              @default(0)
+  renewedFromId   String?
+  renewedFrom     Enrollment?      @relation("Renewal", fields: [renewedFromId], references: [id])
+  renewals        Enrollment[]     @relation("Renewal")
 
   createdByUserId String? // Tracker for employee analytics
   
-  createdAt   DateTime @default(now())
+  createdAt       DateTime         @default(now())
   
-  attendances Attendance[]
+  attendances     Attendance[]
 
   @@index([clientId])
+  @@index([status, endDate])
+  @@index([programId, optionId])
+  @@index([clientId, status])
 }
 
 model Attendance {
-  id            String      @id @default(cuid())
-  enrollmentId  String
-  enrollment    Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  date          DateTime
-  status        String      @default("ATTENDED") // ATTENDED, ABSENT, MAKEUP
-  isMakeup      Boolean     @default(false)
-  createdAt     DateTime    @default(now())
+  id               String           @id @default(cuid())
+  enrollmentId     String
+  enrollment       Enrollment       @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  date             DateTime
+  status           String           @default("ATTENDED") // ATTENDED, ABSENT, MAKEUP
+  isMakeup         Boolean          @default(false)
+  dayKey           String           // "YYYY-MM-DD" in Cairo local time
+  type             AttendanceType   @default(REGULAR)
+  scheduleId       String?
+  schedule         ProgramSchedule? @relation(fields: [scheduleId], references: [id])
+  recordedByUserId String?
+  approvedByUserId String?
+  note             String?
+  createdAt        DateTime         @default(now())
 
+  @@unique([enrollmentId, dayKey, type])
   @@index([enrollmentId])
   @@index([date])
+  @@index([dayKey])
+  @@index([scheduleId])
 }
 
 model InventoryItem {
@@ -269,30 +304,35 @@ model Testimonial {
 }
 
 model SystemSettings {
-  id                     String   @id @default("default")
-  spaceName              String   @default("Soly's Space")
-  spaceDescription       String?  @default("مساحتك الخاصة للبنات فقط للترفيه والتعلم والدراسة في بيئة مريحة وآمنة ✨")
-  whatsappNumber         String?
-  address                String?
-  mapLink                String?
-  paymentMethods         String?
-  membershipDurationDays Int      @default(30)
-  preventDoubleCheckIn   Boolean  @default(true)
-  enablePublicBookings   Boolean  @default(true)
-  instagramLink          String?  @default("https://instagram.com")
-  tiktokLink             String?  @default("https://tiktok.com")
-  maxFailedAttempts      Int      @default(5)
-  lockoutDurationMinutes Int      @default(15)
-  showTestimonials       Boolean  @default(true)
-  topAlertBanner         String?  @default("🎉 Welcome to Soly's Space! Use code FIRST10 for 10% off your first booking!")
-  showTopAlertBanner     Boolean  @default(true)
-  heroTitle              String   @default("Welcome to Soly's Space ✨")
-  heroSubtitle           String   @default("A safe, fun and empowering space for girls to explore their passions, build confidence and create unforgettable memories.")
-  showHeroSection        Boolean  @default(true)
-  showClassesSection     Boolean  @default(true)
-  showPerksSection       Boolean  @default(true)
-  showBookingSection     Boolean  @default(true)
-  adminLoginSecret       String   @default("soly-admin")
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
+  id                      String   @id @default("default")
+  spaceName               String   @default("Soly's Space")
+  spaceDescription        String?  @default("مساحتك الخاصة للبنات فقط للترفيه والتعلم والدراسة في بيئة مريحة وآمنة ✨")
+  whatsappNumber          String?
+  address                 String?
+  mapLink                 String?
+  paymentMethods          String?
+  membershipDurationDays  Int      @default(30)
+  preventDoubleCheckIn    Boolean  @default(true)
+  enablePublicBookings    Boolean  @default(true)
+  instagramLink           String?  @default("https://instagram.com")
+  tiktokLink              String?  @default("https://tiktok.com")
+  maxFailedAttempts       Int      @default(5)
+  lockoutDurationMinutes  Int      @default(15)
+  showTestimonials        Boolean  @default(true)
+  topAlertBanner          String?  @default("🎉 Welcome to Soly's Space! Use code FIRST10 for 10% off your first booking!")
+  showTopAlertBanner      Boolean  @default(true)
+  heroTitle               String   @default("Welcome to Soly's Space ✨")
+  heroSubtitle            String   @default("A safe, fun and empowering space for girls to explore their passions, build confidence and create unforgettable memories.")
+  showHeroSection         Boolean  @default(true)
+  showClassesSection      Boolean  @default(true)
+  showPerksSection        Boolean  @default(true)
+  showBookingSection      Boolean  @default(true)
+  adminLoginSecret        String   @default("soly-admin")
+  defaultDurationDays     Int      @default(30)
+  scanAlwaysAskProgram    Boolean  @default(false)
+  allowOffScheduleCheckIn Boolean  @default(true)
+  expiryWarningDays       Int      @default(3)
+  expireOnSessionsDone    Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }
