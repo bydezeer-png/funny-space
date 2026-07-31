@@ -20,6 +20,8 @@ import {
 } from "lucide-react"
 import { RevenueChart } from "@/components/RevenueChart"
 import { checkUserPermission, PERMISSIONS } from "@/lib/permissions"
+import { cairoDayKey, cairoDayOfWeek } from "@/lib/time"
+import DashboardCalendar from "@/components/DashboardCalendar"
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -87,6 +89,103 @@ export default async function DashboardPage() {
       },
       select: { amount: true, createdAt: true }
     })
+  ])
+
+  // Helper to fetch calendar schedules for a specific Cairo date
+  const getCalendarForDate = async (date: Date, labelName: string) => {
+    const dayKeyStr = cairoDayKey(date)
+    const dow = cairoDayOfWeek(date)
+
+    // 1. Fetch all program schedules for this day of week
+    const programSchedules = await prisma.programSchedule.findMany({
+      where: { dayOfWeek: dow },
+      include: {
+        option: {
+          include: {
+            program: {
+              include: { category: true }
+            }
+          }
+        }
+      }
+    })
+
+    // 2. Fetch all confirmed enrollments active on this date for these options
+    const optionIds = programSchedules.map(s => s.optionId)
+    const enrollments = optionIds.length > 0 ? await prisma.enrollment.findMany({
+      where: {
+        optionId: { in: optionIds },
+        status: "CONFIRMED",
+        startDate: { lte: date },
+        endDate: { gte: date }
+      },
+      include: {
+        client: true,
+        attendances: {
+          where: { dayKey: dayKeyStr }
+        }
+      }
+    }) : []
+
+    // 3. Map schedules to include attendee info
+    const classes = programSchedules.map(schedule => {
+      const optionEnrollments = enrollments.filter(e => e.optionId === schedule.optionId)
+      
+      const attendees = optionEnrollments.map(e => {
+        // Find if they checked in today for this schedule
+        const att = e.attendances.find(a => a.scheduleId === schedule.id || a.dayKey === dayKeyStr)
+        return {
+          id: e.client.id,
+          name: e.client.name,
+          phone: e.client.phone,
+          attended: !!att,
+          attendanceType: att ? att.type : null,
+          attendanceId: att ? att.id : null
+        }
+      })
+
+      const checkedInCount = attendees.filter(a => a.attended).length
+      const totalCount = attendees.length
+
+      return {
+        scheduleId: schedule.id,
+        timeStart: schedule.startTime,
+        timeEnd: schedule.endTime,
+        programName: schedule.option.program.name,
+        optionName: schedule.option.name,
+        categoryName: schedule.option.program.category?.name || "عام",
+        totalCount,
+        checkedInCount,
+        attendees: attendees.sort((a, b) => (a.attended === b.attended) ? 0 : a.attended ? -1 : 1)
+      }
+    })
+
+    // Sort classes by time
+    classes.sort((a, b) => a.timeStart.localeCompare(b.timeStart))
+
+    const formatter = new Intl.DateTimeFormat("ar-EG", {
+      month: "long",
+      day: "numeric"
+    })
+
+    return {
+      dayName: labelName,
+      dateLabel: formatter.format(date),
+      dayKey: dayKeyStr,
+      classes
+    }
+  }
+
+  // Cairo dates for Today, Tomorrow, and Day After Tomorrow
+  const tom = new Date(today)
+  tom.setDate(tom.getDate() + 1)
+  const dat = new Date(today)
+  dat.setDate(dat.getDate() + 2)
+
+  const calendarDays = await Promise.all([
+    getCalendarForDate(today, "اليوم"),
+    getCalendarForDate(tom, "غداً"),
+    getCalendarForDate(dat, new Intl.DateTimeFormat("ar-EG", { weekday: "long" }).format(dat))
   ])
 
   const canViewReports = checkUserPermission(currentUser, PERMISSIONS.VIEW_REPORTS)
@@ -246,6 +345,9 @@ export default async function DashboardPage() {
         </div>
 
       </div>
+
+      {/* Calendar Dashboard View */}
+      <DashboardCalendar initialDays={calendarDays} />
 
       {/* Main Grid: Analytics & Activities */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
