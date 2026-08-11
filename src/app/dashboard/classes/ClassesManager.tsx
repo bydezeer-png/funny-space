@@ -24,6 +24,7 @@ import { useConfirm, usePrompt } from "@/components/ConfirmProvider"
 import { toast } from "sonner"
 import { searchClientsAction } from "@/actions/client"
 import { enrollClient, updateRemainingSessions, recordAttendance } from "@/actions/enrollments"
+import { sessionsUsed } from "@/lib/attendance/rules"
 
 export default function ClassesManager({
   initialPrograms,
@@ -571,11 +572,11 @@ export default function ClassesManager({
                 </div>
               ) : (
                 selectedClassForDetails.enrollments.map((enr: any) => {
-                  const regularCount = enr.attendances.filter((a: any) => !a.isMakeup && a.status !== "IMPORTED").length
-                  const importedCount = enr.attendances.filter((a: any) => a.status === "IMPORTED").length
-                  const totalRegular = regularCount + importedCount
                   const maxSessions = selectedClassForDetails.sessions || 8
-                  const remaining = maxSessions - totalRegular
+                  // Same rule as the scanner: every real check-in consumes a session,
+                  // plus whatever was carried over from the old system.
+                  const usedCount = sessionsUsed(enr)
+                  const remaining = Math.max(0, maxSessions - usedCount)
                   const remainingPaid = (enr.totalAmount || 0) - (enr.amountPaid || 0)
 
                   return (

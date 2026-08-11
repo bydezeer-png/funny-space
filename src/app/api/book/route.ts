@@ -49,6 +49,20 @@ export async function POST(request: Request) {
       calculatedAmount = option.price
       enrollmentData.programId = itemId
       enrollmentData.optionId = optionId
+
+      // Without an endDate the subscription never expires (rules.ts treats a
+      // missing endDate as "no expiry"), so derive it the same way the
+      // reception flow does.
+      const settings = await prisma.systemSettings.findUnique({
+        where: { id: "default" }
+      })
+      const duration =
+        option.durationDays || settings?.membershipDurationDays || 30
+      const start = new Date()
+      const end = new Date(start)
+      end.setDate(end.getDate() + duration)
+      enrollmentData.startDate = start
+      enrollmentData.endDate = end
     }
     else if (type === "WORKSHOP") {
       const workshop = await prisma.workshop.findUnique({
@@ -59,6 +73,7 @@ export async function POST(request: Request) {
       }
       calculatedAmount = workshop.price
       enrollmentData.workshopId = itemId
+      enrollmentData.endDate = workshop.endDate
     }
     else if (type === "EVENT") {
       const event = await prisma.event.findUnique({
@@ -69,6 +84,7 @@ export async function POST(request: Request) {
       }
       calculatedAmount = event.price
       enrollmentData.eventId = itemId
+      enrollmentData.endDate = event.date
     }
     else {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 })

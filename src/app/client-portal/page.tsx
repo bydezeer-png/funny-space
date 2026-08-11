@@ -16,6 +16,7 @@ import {
   UserCheck
 } from "lucide-react"
 import Link from "next/link"
+import { sessionsTotal, sessionsUsed } from "@/lib/attendance/rules"
 
 export default async function ClientPortalPage() {
   const session = await auth()
@@ -204,7 +205,8 @@ export default async function ClientPortalPage() {
 
                 const paid = e.amountPaid || 0
                 const remaining = price - paid
-                const totalSessions = e.option?.sessionsPerMonth || 0
+                const totalSessions = sessionsTotal(e)
+                const usedSessions = sessionsUsed(e)
 
                 return (
                   <div 
@@ -259,12 +261,12 @@ export default async function ClientPortalPage() {
                         <div className="space-y-2 max-w-md">
                           <div className="flex justify-between items-center text-xs font-bold text-foreground/70">
                             <span className="flex items-center gap-1"><UserCheck size={14} className="text-green-500" /> الحصص المستهلكة</span>
-                            <span>{e.attendances.length} من أصل {totalSessions} حصة</span>
+                            <span>{usedSessions} من أصل {totalSessions} حصة</span>
                           </div>
                           <div className="w-full bg-pink-50/50 rounded-full h-2.5 border border-border/30">
-                            <div 
-                              className="bg-green-500 h-full rounded-full transition-all duration-500" 
-                              style={{ width: `${Math.min(100, (e.attendances.length / totalSessions) * 100)}%` }}
+                            <div
+                              className="bg-green-500 h-full rounded-full transition-all duration-500"
+                              style={{ width: `${Math.min(100, (usedSessions / totalSessions) * 100)}%` }}
                             ></div>
                           </div>
                         </div>

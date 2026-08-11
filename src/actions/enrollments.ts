@@ -8,7 +8,7 @@ import { logAction } from "@/lib/audit"
 import { verifyPermission } from "./users"
 import { PERMISSIONS } from "@/lib/permissions"
 import bcrypt from "bcryptjs"
-import { evaluateEnrollment } from "@/lib/attendance/rules"
+import { evaluateEnrollment, isConsumingAttendance } from "@/lib/attendance/rules"
 import { cairoDayKey, cairoDayOfWeek } from "@/lib/time"
 
 export async function getEnrollments() {
@@ -55,6 +55,31 @@ export async function createEnrollment(data: {
 
 export async function confirmEnrollment(id: string, paymentMethod: string, totalAmount: number, amountPaid: number) {
   await verifyPermission(PERMISSIONS.CONFIRM_ENROLLMENT)
+
+  // Public bookings used to be created without an endDate, which made the
+  // subscription immortal. Fill it in at confirmation time if it is missing.
+  const existing = await prisma.enrollment.findUnique({
+    where: { id },
+    include: { option: true, workshop: true, event: true }
+  })
+  if (!existing) throw new Error("الاشتراك غير موجود")
+
+  let endDate = existing.endDate
+  if (!endDate) {
+    if (existing.workshop) {
+      endDate = existing.workshop.endDate
+    } else if (existing.event) {
+      endDate = existing.event.date
+    } else {
+      const settings = await prisma.systemSettings.findUnique({ where: { id: "default" } })
+      const duration =
+        existing.option?.durationDays || settings?.membershipDurationDays || 30
+      const start = existing.startDate || new Date()
+      endDate = new Date(start)
+      endDate.setDate(endDate.getDate() + duration)
+    }
+  }
+
   // Confirm and mark payment
   const enrollment = await prisma.enrollment.update({
     where: { id },
@@ -62,7 +87,8 @@ export async function confirmEnrollment(id: string, paymentMethod: string, total
       status: "CONFIRMED",
       paymentMethod,
       totalAmount,
-      amountPaid
+      amountPaid,
+      endDate
     },
     include: {
       program: true,
@@ -369,17 +395,16 @@ export async function updateRemainingSessions(enrollmentId: string, newRemaining
     throw new Error(`عدد الحصص المتبقية يجب أن يكون بين 0 و ${maxSessions}`)
   }
 
-  // Count active regular check-ins
-  const regularCount = await prisma.attendance.count({
-    where: {
-      enrollmentId,
-      type: "REGULAR"
-    }
+  // Count the check-ins that already consumed a session (same rule as the scanner)
+  const attendances = await prisma.attendance.findMany({
+    where: { enrollmentId },
+    select: { type: true, status: true, isMakeup: true }
   })
+  const consumedCount = attendances.filter(isConsumingAttendance).length
 
-  const targetCarried = maxSessions - newRemainingSessions - regularCount
+  const targetCarried = maxSessions - newRemainingSessions - consumedCount
   if (targetCarried < 0) {
-    throw new Error(`لا يمكن جعل الحصص المتبقية ${newRemainingSessions} لأن العميلة قامت بحضور ${regularCount} حصص أساسية بالفعل. الحصص المتبقية الممكنة كحد أقصى هي ${maxSessions - regularCount}`)
+    throw new Error(`لا يمكن جعل الحصص المتبقية ${newRemainingSessions} لأن العميلة قامت بحضور ${consumedCount} حصة بالفعل. الحصص المتبقية الممكنة كحد أقصى هي ${maxSessions - consumedCount}`)
   }
 
   await prisma.enrollment.update({

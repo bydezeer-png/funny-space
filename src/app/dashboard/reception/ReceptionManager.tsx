@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { confirmEnrollment, cancelEnrollment, recordAttendance, addPayment } from "@/actions/enrollments"
+import { sessionsTotal, sessionsUsed } from "@/lib/attendance/rules"
 import { 
   CheckCircle, 
   XCircle, 
@@ -219,13 +220,13 @@ export default function ReceptionManager({
                 {activeTab === 'confirmed' && e.program && (
                   <div className="mb-4 space-y-2 bg-pink-50/5 border border-border/25 p-3 rounded-2xl">
                     <div className="flex justify-between items-center text-xs font-bold text-foreground/60">
-                      <span>حضور الحصص: {e.attendances.length} من {e.option?.sessionsPerMonth || 8}</span>
-                      <span className="text-primary">{Math.min(100, Math.round((e.attendances.length / (e.option?.sessionsPerMonth || 8)) * 100))}%</span>
+                      <span>حضور الحصص: {sessionsUsed(e)} من {sessionsTotal(e)}</span>
+                      <span className="text-primary">{Math.min(100, Math.round((sessionsUsed(e) / sessionsTotal(e)) * 100))}%</span>
                     </div>
                     <div className="w-full bg-secondary rounded-full h-2 border border-border/35 overflow-hidden">
-                      <div 
-                        className="bg-green-500 h-full rounded-full transition-all duration-500" 
-                        style={{width: `${Math.min(100, (e.attendances.length / (e.option?.sessionsPerMonth || 8)) * 100)}%`}}
+                      <div
+                        className="bg-green-500 h-full rounded-full transition-all duration-500"
+                        style={{width: `${Math.min(100, (sessionsUsed(e) / sessionsTotal(e)) * 100)}%`}}
                       ></div>
                     </div>
                   </div>

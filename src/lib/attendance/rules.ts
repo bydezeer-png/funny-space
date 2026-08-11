@@ -1,13 +1,46 @@
 import { cairoDayKey, cairoDayOfWeek, cairoMinutes } from "../time"
 import { EnrollmentScanState, Blocker, Warning } from "./types"
 
+/**
+ * Does a MAKEUP attendance consume a session from the plan?
+ *
+ * The system never deducts a session for a no-show, so a "free" makeup means the
+ * client gets one extra session beyond what she paid for (9 entries on an 8
+ * session plan, 2 entries on a single session plan). Set this to false only if
+ * makeups should be granted on top of the paid sessions.
+ */
+export const MAKEUP_CONSUMES_SESSION = true
+
+/**
+ * A single source of truth for "did this attendance eat a session?".
+ * REGULAR and OFF_SCHEDULE are both real check-ins, so they always consume one.
+ * IMPORTED rows are historical backfill and never consume.
+ */
+export function isConsumingAttendance(a: any): boolean {
+  if (a.status === "IMPORTED") return false
+  const type = a.type || (a.isMakeup ? "MAKEUP" : "REGULAR")
+  if (type === "IMPORTED") return false
+  if (type === "MAKEUP") return MAKEUP_CONSUMES_SESSION
+  return true
+}
+
 export function sessionsUsed(e: any): number {
-  const regularCount = e.attendances.filter(
-    (a: any) =>
-      a.type === "REGULAR" ||
-      (!a.type && !a.isMakeup && a.status !== "IMPORTED")
-  ).length
-  return regularCount + (e.carriedSessions || 0)
+  const consumedCount = (e.attendances || []).filter(isConsumingAttendance).length
+  return consumedCount + (e.carriedSessions || 0)
+}
+
+/**
+ * Sessions the plan grants. Shared with the UI so every screen shows the same
+ * "x من y" instead of each one re-deriving it.
+ */
+export function sessionsTotal(e: any): number {
+  if (e.workshop || e.event) return 1
+  return e.option?.sessionsPerMonth ?? 8
+}
+
+export function sessionsRemaining(e: any): number {
+  const used = e.workshop || e.event ? (e.attendances || []).length : sessionsUsed(e)
+  return Math.max(0, sessionsTotal(e) - used)
 }
 
 export function allowedByPayment(
@@ -47,6 +80,7 @@ export function evaluateEnrollment(
   const defaultDuration = settings?.defaultDurationDays ?? 30
   const allowOffSchedule = settings?.allowOffScheduleCheckIn ?? true
   const warningDaysLimit = settings?.expiryWarningDays ?? 3
+  const preventDoubleCheckIn = settings?.preventDoubleCheckIn ?? true
 
   const blockers: Blocker[] = []
   const warnings: Warning[] = []
@@ -89,7 +123,7 @@ export function evaluateEnrollment(
     kind = "PROGRAM"
     title = `${e.program?.name || "برنامج"} - ${e.option?.name || "فئة"}`
     categoryName = e.program?.category?.name || ""
-    totalSessions = e.option?.sessionsPerMonth || 8
+    totalSessions = sessionsTotal(e)
     usedSessions = sessionsUsed(e)
     makeupAllowed = e.option?.makeupAllowance ?? 1
     makeupUsed = e.attendances.filter((a: any) => a.type === "MAKEUP" || a.isMakeup).length
@@ -220,10 +254,11 @@ export function evaluateEnrollment(
   }
 
   // Allowed actions based on blockers
+  const alreadyToday = blockers.indexOf("ALREADY_CHECKED_IN") !== -1
   const hasSevereBlocker = blockers.some((b) => b !== "ALREADY_CHECKED_IN")
 
   if (!hasSevereBlocker) {
-    if (blockers.indexOf("ALREADY_CHECKED_IN") === -1) {
+    if (!alreadyToday) {
       if (kind === "PROGRAM") {
         const hasSchedules = e.option?.schedules && e.option.schedules.length > 0
         if (!hasSchedules || isScheduledToday) {
@@ -240,8 +275,10 @@ export function evaluateEnrollment(
         // Workshops and events can check in any day
         allowedActions.push("CHECK_IN")
       }
-    } else {
-      // Already checked in today, but we can allow makeup or off-schedule if quota is available
+    } else if (!preventDoubleCheckIn) {
+      // Double check-in is explicitly allowed in settings: a second entry the
+      // same day can only be a makeup or an off-schedule one (the unique
+      // constraint is [enrollmentId, dayKey, type]).
       if (kind === "PROGRAM") {
         if (makeupUsed < makeupAllowed) {
           allowedActions.push("CHECK_IN_MAKEUP")

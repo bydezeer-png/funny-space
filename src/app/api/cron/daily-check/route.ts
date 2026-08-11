@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { sessionsUsed } from "@/lib/attendance/rules"
 
 export async function GET(request: Request) {
   // Verify Cron authorization secret
@@ -57,13 +58,11 @@ export async function GET(request: Request) {
             sessionsPerMonth: true
           }
         },
-        _count: {
+        attendances: {
           select: {
-            attendances: {
-              where: {
-                type: "REGULAR"
-              }
-            }
+            type: true,
+            status: true,
+            isMakeup: true
           }
         }
       }
@@ -72,7 +71,9 @@ export async function GET(request: Request) {
     const completedProgramIds: string[] = []
     for (const p of confirmedPrograms) {
       if (p.option) {
-        const totalUsed = (p.carriedSessions || 0) + p._count.attendances
+        // Same rule the scanner uses, so a subscription consumed through
+        // off-schedule check-ins is closed too.
+        const totalUsed = sessionsUsed(p)
         if (totalUsed >= p.option.sessionsPerMonth) {
           completedProgramIds.push(p.id)
         }
